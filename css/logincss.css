@@ -1,3 +1,6 @@
+
+/* BASIC */
+
 html {
   background-color: #56baed;
 }
@@ -80,7 +83,6 @@ h2.active {
 
 input[type=button], input[type=submit], input[type=reset]  {
   background-color: #56baed;
-  width: 85%;
   border: none;
   color: white;
   padding: 15px 80px;
@@ -257,11 +259,4 @@ input[type=text]:placeholder {
 
 #icon {
   width:60%;
-}
-
-.headerColor {
-position: absolute;
-width: 100px;
-height: 100px;
-content: '';
 }
