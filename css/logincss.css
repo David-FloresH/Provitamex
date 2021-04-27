@@ -66,7 +66,6 @@ h2 {
 
 
 
-/* TABS */
 
 h2.inactive {
   color: #cccccc;
@@ -79,7 +78,6 @@ h2.active {
 
 
 
-/* FORM TYPOGRAPHY*/
 
 input[type=button], input[type=submit], input[type=reset]  {
   background-color: #56baed;
@@ -185,7 +183,6 @@ input[type=text]:placeholder {
   }
 }
 
-/* Simple CSS3 Fade-in Animation */
 @-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 @-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
@@ -229,7 +226,6 @@ input[type=text]:placeholder {
   animation-delay: 1s;
 }
 
-/* Simple CSS3 Fade-in Animation */
 .underlineHover:after {
   display: block;
   left: 0;
@@ -248,10 +244,6 @@ input[type=text]:placeholder {
 .underlineHover:hover:after{
   width: 100%;
 }
-
-
-
-/* OTHERS */
 
 *:focus {
     outline: none;
