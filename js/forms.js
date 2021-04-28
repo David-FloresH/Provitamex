@@ -3,8 +3,15 @@ var app = angular.module('myApp', []);
 console.log("bienvenidos");
 
 app.controller('MainController', ['$scope', function($scope) {
-    $scope.message = function () {
-        console.log("I am in bro");
+    $scope.getUsers = function () {
+      $.ajax({    type: "GET", dataType: 'jsonstring', crossDomain: true,   url: "https://api.bind.com.mx/api/Warehouses",     
+      beforeSend: function(xhrObj) 
+      {        xhrObj.setRequestHeader("Cache-Control", "no-cache");        
+      xhrObj.setRequestHeader("Authorization", 
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthcmVuMXw3MjE4MSIsIkludGVybmFsSUQiOiI1Njc0OWE5Yy04ZTdjLTQ4YTktYjkxYS0wMjkyN2U3MGY4MDIiLCJuYmYiOjE2MTkzOTc2ODUsImV4cCI6MTY1MDkzMzY4NSwiaWF0IjoxNjE5Mzk3Njg1LCJpc3MiOiJNaW5udF9Tb2x1dGlvbnNfU0FfREVfQ1YiLCJhdWQiOiJCaW5kX0VSUF9BUElfVXNlcnMifQ.wjhxCvaXIv6A0Y2ook8dPdGF7WOHqf-i_vzoDJPTxQg");
+     },    
+    })
+    .done(function (data) {alert("success");}).fail(function () {alert("error");});
     }
 }]);
 
