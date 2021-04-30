@@ -1,19 +1,28 @@
-var app = angular.module('myApp', []);
+var app = angular.module("myApp", []);
 
-console.log("bienvenidos");
 
-app.controller('MainController', ['$scope', function($scope) {
+
+app.controller("MainController", ['$scope', function($scope) {
     $scope.getUsers = function () {
-      $.ajax({    type: "GET", dataType: 'jsonstring', crossDomain: true,   url: "https://api.bind.com.mx/api/Warehouses",     
-      beforeSend: function(xhrObj) 
-      {        xhrObj.setRequestHeader("Cache-Control", "no-cache");        
-      xhrObj.setRequestHeader("Authorization", 
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthcmVuMXw3MjE4MSIsIkludGVybmFsSUQiOiI1Njc0OWE5Yy04ZTdjLTQ4YTktYjkxYS0wMjkyN2U3MGY4MDIiLCJuYmYiOjE2MTkzOTc2ODUsImV4cCI6MTY1MDkzMzY4NSwiaWF0IjoxNjE5Mzk3Njg1LCJpc3MiOiJNaW5udF9Tb2x1dGlvbnNfU0FfREVfQ1YiLCJhdWQiOiJCaW5kX0VSUF9BUElfVXNlcnMifQ.wjhxCvaXIv6A0Y2ook8dPdGF7WOHqf-i_vzoDJPTxQg");
-     },    
-    })
-    .done(function (data) {alert("success");}).fail(function () {alert("error");});
-    }
+      var settings = {
+        "url": "https://api.bind.com.mx/api/Warehouses",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthcmVuMXw3MjE4MSIsIkludGVybmFsSUQiOiI1Njc0OWE5Yy04ZTdjLTQ4YTktYjkxYS0wMjkyN2U3MGY4MDIiLCJuYmYiOjE2MTkzOTc2ODUsImV4cCI6MTY1MDkzMzY4NSwiaWF0IjoxNjE5Mzk3Njg1LCJpc3MiOiJNaW5udF9Tb2x1dGlvbnNfU0FfREVfQ1YiLCJhdWQiOiJCaW5kX0VSUF9BUElfVXNlcnMifQ.wjhxCvaXIv6A0Y2ook8dPdGF7WOHqf-i_vzoDJPTxQg",
+          "Cache-Control": "no-cache"
+        },
+      };
+      
+      $.ajax(settings).done(function (response) {
+        console.log(response);
+      });
+      }
 }]);
+
+
+// var data;
+
 
 function autocomplete(inp, arr) {
   /*the autocomplete function takes two arguments,
@@ -111,3 +120,36 @@ document.addEventListener("click", function (e) {
     closeAllLists(e.target);
 });
 } 
+
+// const express = require('express');
+// const tediousExpress = require('express-tedious');
+// const bodyParser = require('bodyParser');
+// const fs = require('fs');
+
+// let app = express();
+// var path = require('path');
+// var server = require('http').Server(app);
+// var io = require('socket.io')(server);
+
+// app.use(bordyParser.json({
+//   extended: true,
+//   limit = '100mb',
+//   parameterLimit = 100000
+// }));
+
+// app.use(function (req, res, next) {
+//   res.header('Access-Control-Origin', 'https://192.168.0.5:8080');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST'); 
+//   res.header('Access-Control-Allow-Headers', 'Content-Type'); 
+//   res.header('X-Frame-Options','sameorigin'); 
+//   res.header('Access-Control-Allow-Origin', '*'); 
+//   res.header('Access-Control-Allow-Headers', 'access-control-allow=origin', 'X-requested-with', 'Content-Type', 'Content-length', 'Connection');
+//   res.header('Authorization','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthcmVuMXw3MjE4MSIsIkludGVybmFsSUQiOiI1Njc0OWE5Yy04ZTdjLTQ4YTktYjkxYS0wMjkyN2U3MGY4MDIiLCJuYmYiOjE2MTkzOTc2ODUsImV4cCI6MTY1MDkzMzY4NSwiaWF0IjoxNjE5Mzk3Njg1LCJpc3MiOiJNaW5udF9Tb2x1dGlvbnNfU0FfREVfQ1YiLCJhdWQiOiJCaW5kX0VSUF9BUElfVXNlcnMifQ.wjhxCvaXIv6A0Y2ook8dPdGF7WOHqf-i_vzoDJPTxQg') ;
+// });
+
+// app.use('/pictures', epress.static(__dirname + '/img'));
+// app.use('/html', epress.static(__dirname + '/js'));
+
+// app.get('/', function(req,res){
+//   res.sendFile(path.join(__dirname + 'forms.html'))
+// })
