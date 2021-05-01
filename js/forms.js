@@ -4,8 +4,10 @@ var app = angular.module("myApp", []);
 
 app.controller("MainController", ['$scope', function($scope) {
     $scope.getUsers = function () {
+      console.log('Iam in')
       var settings = {
         "url": "https://api.bind.com.mx/api/Warehouses",
+        "dataType": "json",
         "method": "GET",
         "timeout": 0,
         "headers": {
