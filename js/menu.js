@@ -1,4 +1,4 @@
-console.log("hola");
+console.log("inicio");
 
 var app = angular.module("myApp", []);
 
@@ -48,7 +48,8 @@ app.controller("MainController", ['$scope', function($scope) {
         $scope.selectedProducts.unshift({
           id: "",
           name: $scope.addedProduct,
-          quantity: 1
+          quantity: 1,
+          price: 55
         });
 
         $scope.addedProduct = '';
@@ -58,7 +59,7 @@ app.controller("MainController", ['$scope', function($scope) {
       $scope.selectedProducts[index].quantity += 1;
     }
     $scope.decrease = function(index){
-      if($scope.selectedProducts[index].quantity == 0){
+      if($scope.selectedProducts[index].quantity == 1){
         console.log("I am in");
       }
       else{
@@ -70,13 +71,24 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.sendForm = function(){
-      
+      $scope.totalSale = 0;
+      $scope.selectedProducts.forEach(product => {
+        $scope.totalSale += (product.quantity*product.price);
+      })
+      $('#staticBackdrop').modal('show');
+      console.log("enviar");
+    }
+
+    $scope.finishOrder = function(){
+      $('#staticBackdrop').modal('hide');
+      document.getElementById("clientInput").value = "";
+      $scope.showCompletedForm = false;
+      $scope.showForm = true;
+      Swal.fire("Exitoso!", "Se ha registrado la orden correctamente", "success");
     }
 
 
 }]);
-
-
 
 var names = ["Manuel Montoya","Marco","Miguel","Jonathan","Sofia","David","Karen"];
 var products = ["Lorem ipsum dolor sit amet","consectetur adipiscing","placerat tellus, eget varius","Cras interdum"];
