@@ -2,6 +2,33 @@ console.log("inicio");
 
 var app = angular.module("myApp", []);
 
+$(document).ready(function () {
+  $('#datepicker').datepicker({
+    dateFormat: 'dd-mm-yy'
+  });
+  $('#datepicker2').datepicker({
+    dateFormat: 'dd-mm-yy'
+  });
+  
+
+  $('.timepicker').timepicker({
+    timeFormat: 'h:mm p',
+    interval: 60,
+    minTime: '10',
+    maxTime: '6:00pm',
+    defaultTime: '11',
+    startTime: '10:00',
+    dynamic: false,
+    dropdown: true,
+    scrollbar: true
+  });
+
+
+
+
+});
+
+
 app.controller("MainController", ['$scope', function($scope) {
     $scope.options = ["Calendario","Registro de Venta","Consultas de Información"];
     $scope.warehouses = ["César","Esteban","Iván"];
@@ -84,7 +111,7 @@ app.controller("MainController", ['$scope', function($scope) {
       document.getElementById("clientInput").value = "";
       $scope.showCompletedForm = false;
       $scope.showForm = true;
-      Swal.fire("Exitoso!", "Se ha registrado la orden correctamente", "success");
+      Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     }
 
 
