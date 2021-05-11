@@ -1,5 +1,40 @@
 console.log("inicio");
+var settings = {
+  "url": "http://localhost:8081/clients",
+  "dataType": 'jsonp',
+  "method": "GET",
+  "timeout": 0,
+  "headers": {
+    "Access-Control-Allow-Origin:":"*",
+    "Cache-Control": "no-cache"
+  }
+};
 
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
+/*
+$.ajax({
+  type: "GET",
+  url: "http://localhost:8081/clients",
+  dataType: 'json',
+  contentType: "application/json; charset=utf8",
+  headers: {
+    "Access-Control-Allow-Origin:":"*"
+  },    
+  beforeSend: function(xhr,settings){
+    //spinner show;
+  },
+  success: function(response){
+    console.log(response);
+  },
+  error: function(xhr,status,errorThrown) {
+    console.log("Error");
+  },
+  complete: function(xhr, status){
+    //spinner hide;
+  }
+});*/
 var app = angular.module("myApp", []);
 
 $(document).ready(function () {
@@ -49,7 +84,7 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showCompletedForm = false;
                 $.ajax({
                   type: "GET",
-                  url: "",
+                  url: "localhost:8081",
                   dataType: 'json',
                   contentType: "application/json; charset=utf8",
                   beforeSend: function(xhr,settings){
