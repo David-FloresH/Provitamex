@@ -9,8 +9,6 @@ $(document).ready(function () {
   $('#datepicker2').datepicker({
     dateFormat: 'dd-mm-yy'
   });
-  
-
   $('.timepicker').timepicker({
     timeFormat: 'h:mm p',
     interval: 60,
@@ -22,12 +20,7 @@ $(document).ready(function () {
     dropdown: true,
     scrollbar: true
   });
-
-
-
-
 });
-
 
 app.controller("MainController", ['$scope', function($scope) {
     $scope.options = ["Calendario","Registro de Venta","Consultas de Información"];
@@ -38,6 +31,7 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.showCalendar = true;
     $scope.findClient = "";
     $scope.addedProduct = "";
+    $scope.productList = [{}];
 
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
@@ -53,6 +47,24 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showCalendar = false;
                 $scope.showForm = true;
                 $scope.showCompletedForm = false;
+                $.ajax({
+                  type: "GET",
+                  url: "",
+                  dataType: 'json',
+                  contentType: "application/json; charset=utf8",
+                  beforeSend: function(xhr,settings){
+                    //spinner show;
+                  },
+                  success: function(response){
+                    console.log(response);
+                  },
+                  error: function(xhr,status,errorThrown) {
+                    console.log("Error");
+                  },
+                  complete: function(xhr, status){
+                    //spinner hide;
+                  }
+                });
                 break;
        }
     };
@@ -113,8 +125,6 @@ app.controller("MainController", ['$scope', function($scope) {
       $scope.showForm = true;
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     }
-
-
 }]);
 
 var names = ["Manuel Montoya","Marco","Miguel","Jonathan","Sofia","David","Karen"];
@@ -219,3 +229,4 @@ function autocomplete(inp, arr) {
 
 autocomplete(document.getElementById("clientInput"), names);
 autocomplete(document.getElementById("productInput"), products);
+
