@@ -1,32 +1,25 @@
 console.log("inicio");
-var settings = {
-  "url": "http://localhost:8081/clients",
-  "dataType": 'jsonp',
-  "method": "GET",
-  "timeout": 0,
-  "headers": {
-    "Access-Control-Allow-Origin:":"*",
-    "Cache-Control": "no-cache"
-  }
-};
 
-$.ajax(settings).done(function (response) {
-  console.log(response);
-});
-/*
+let clientListName = [];
+let clientListId = [];
+let warehousesList = [];
+
+$.ajaxSetup({
+  headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+})
 $.ajax({
-  type: "GET",
-  url: "http://localhost:8081/clients",
+  method: 'GET',
+  jsonp: 'callback',
+  url: 'http://localhost:8081/clients',
   dataType: 'json',
-  contentType: "application/json; charset=utf8",
-  headers: {
-    "Access-Control-Allow-Origin:":"*"
-  },    
   beforeSend: function(xhr,settings){
     //spinner show;
   },
   success: function(response){
-    console.log(response);
+    response.forEach(element => {
+      clientListName.push(element.clientName);
+      clientListId.push(element.id);
+    })
   },
   error: function(xhr,status,errorThrown) {
     console.log("Error");
@@ -34,7 +27,15 @@ $.ajax({
   complete: function(xhr, status){
     //spinner hide;
   }
-});*/
+});
+
+
+
+
+console.log("fin");
+
+
+
 var app = angular.module("myApp", []);
 
 $(document).ready(function () {
@@ -59,14 +60,12 @@ $(document).ready(function () {
 
 app.controller("MainController", ['$scope', function($scope) {
     $scope.options = ["Calendario","Registro de Venta","Consultas de Información"];
-    $scope.warehouses = ["César","Esteban","Iván"];
     $scope.selectedProducts = [];
     $scope.showForm = false;
     $scope.showCompletedForm = false;
     $scope.showCalendar = true;
     $scope.findClient = "";
     $scope.addedProduct = "";
-    $scope.productList = [{}];
 
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
@@ -82,32 +81,14 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showCalendar = false;
                 $scope.showForm = true;
                 $scope.showCompletedForm = false;
-                $.ajax({
-                  type: "GET",
-                  url: "localhost:8081",
-                  dataType: 'json',
-                  contentType: "application/json; charset=utf8",
-                  beforeSend: function(xhr,settings){
-                    //spinner show;
-                  },
-                  success: function(response){
-                    console.log(response);
-                  },
-                  error: function(xhr,status,errorThrown) {
-                    console.log("Error");
-                  },
-                  complete: function(xhr, status){
-                    //spinner hide;
-                  }
-                });
                 break;
        }
     };
 
     $scope.searchClient = function (){
-        $scope.clientName = document.getElementById("clientInput").value;
         $scope.showForm = false;
         $scope.showCompletedForm = true;
+        $scope.clientName = document.getElementById("clientInput").value;
         $scope.clientAddress = "Rio Mayo #1382 Col. Santa Teresa";
         $scope.clientPhone = "686-118-6158";
     }
@@ -161,9 +142,6 @@ app.controller("MainController", ['$scope', function($scope) {
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     }
 }]);
-
-var names = ["Manuel Montoya","Marco","Miguel","Jonathan","Sofia","David","Karen"];
-var products = ["Lorem ipsum dolor sit amet","consectetur adipiscing","placerat tellus, eget varius","Cras interdum"];
 
 function autocomplete(inp, arr) {
     /*the autocomplete function takes two arguments,
@@ -262,6 +240,69 @@ function autocomplete(inp, arr) {
     });
   }
 
-autocomplete(document.getElementById("clientInput"), names);
-autocomplete(document.getElementById("productInput"), products);
+
+function buscarCliente() {
+  let cliente = document.getElementById("clientInput").value;
+  let indexID = clientListName.indexOf(cliente);
+  let ID = clientListId[indexID];
+
+
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients/'+ID,
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      console.log(response.telephones);
+      console.log(response.addresses[0]);
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      //spinner hide;
+    }
+  });
+
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/warehouses',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      response.forEach(element => {
+        console.log(element.name);
+        warehousesList.push(element.name);
+      });
+      console.log(warehousesList);
+      for (let j = 0; j < warehousesList.length; j++){
+        console.log(warehousesList[j]);
+        $('#warehousesSelect').append('<option value=>'+warehousesList[j]+'</option>');
+      }
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      //spinner hide;
+    }
+  });
+}
+
+
+
+autocomplete(document.getElementById("clientInput"), clientListName);
 

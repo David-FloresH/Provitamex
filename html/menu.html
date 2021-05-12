@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <!-- Optional: include a polyfill for ES6 Promises for IE11 and Android browser -->
 <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
@@ -52,7 +53,7 @@
           <div class="autocomplete" style="margin-right:20px;">
             <input ng-model="findClient" type="text" class="form-control" id="clientInput" aria-describedby="emailHelp" style="margin-top: 30px;" placeholder="Buscar Cliente">
           </div>
-            <button class="btn btn-primary" style="margin-top: 10px;" ng-click="searchClient()">Buscar</button>
+            <button class="btn btn-primary" style="margin-top: 10px;" onclick="buscarCliente()" ng-click="searchClient()">Buscar</button>
         </div>
         <div class="form-row" ng-show="showCompletedForm">
             <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Cliente</label>
@@ -61,11 +62,11 @@
         </div>
         <div class="form-row" ng-show="showCompletedForm">
           <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Domicilio</label>
-          <input type="name" readonly class="form-control" id="displayClientInput" aria-describedby="emailHelp" style="margin-top: 5px;" ng-model="clientAddress">
+          <input type="name" readonly class="form-control" id="displayClientAddress" aria-describedby="emailHelp" style="margin-top: 5px;" ng-model="clientAddress">
         </div>
         <div class="form-row" ng-show="showCompletedForm">
           <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Celular</label>
-          <input type="name" readonly class="form-control" id="displayClientInput" aria-describedby="emailHelp" style="margin-top: 5px;" ng-model="clientPhone">
+          <input type="name" readonly class="form-control" id="displayClientPhone" aria-describedby="emailHelp" style="margin-top: 5px;" ng-model="clientPhone">
         </div>
         <div class="row" ng-show="showCompletedForm">
           <div class="col-5">
@@ -83,7 +84,8 @@
         </div>
         <div class="form-row" ng-show="showCompletedForm">
           <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Almacen</label>
-          <select style="margin-top: 5px" ng-options="warehouse for warehouse in warehouses" class="form-control" id="exampleFormControlSelect1" ng-model='warehouseSelected'></select>
+          <!-- <select style="margin-top: 5px" ng-options="warehouse for warehouse in warehouses" class="form-control" id="warehousesSelect" ng-model='warehouseSelected'></select> -->
+          <select style="margin-top: 5px" class="form-control" id="warehousesSelect" ng-model='warehouseSelected'></select>
         </div>
         <div class="row" ng-show="showCompletedForm">
           <div class="col-8">
