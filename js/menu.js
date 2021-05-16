@@ -1,42 +1,7 @@
 console.log("inicio");
 
-let clientListName = [];
-let clientListId = [];
-let warehousesList = [];
-
-$.ajaxSetup({
-  headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
-})
-$.ajax({
-  method: 'GET',
-  jsonp: 'callback',
-  url: 'http://localhost:8081/clients',
-  dataType: 'json',
-  beforeSend: function(xhr,settings){
-    //spinner show;
-  },
-  success: function(response){
-    response.forEach(element => {
-      clientListName.push(element.clientName);
-      clientListId.push(element.id);
-    })
-  },
-  error: function(xhr,status,errorThrown) {
-    console.log("Error");
-  },
-  complete: function(xhr, status){
-    //spinner hide;
-  }
-});
-
-
-
-
-console.log("fin");
-
-
-
 var app = angular.module("myApp", []);
+var scope;
 
 $(document).ready(function () {
   $('#datepicker').datepicker({
@@ -58,14 +23,20 @@ $(document).ready(function () {
   });
 });
 
+window.onload = function(){
+  scope = angular.element($('#scope')).scope();
+}
+
 app.controller("MainController", ['$scope', function($scope) {
     $scope.options = ["Calendario","Registro de Venta","Consultas de Información"];
     $scope.selectedProducts = [];
     $scope.showForm = false;
     $scope.showCompletedForm = false;
     $scope.showCalendar = true;
+    $scope.showLoading = false;
     $scope.findClient = "";
     $scope.addedProduct = "";
+    $scope.clientListNames = [];
 
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
@@ -79,8 +50,10 @@ app.controller("MainController", ['$scope', function($scope) {
             
             case 1:
                 $scope.showCalendar = false;
-                $scope.showForm = true;
+                $scope.showLoading = true;
+                $scope.showForm = false;
                 $scope.showCompletedForm = false;
+                searchClientName();
                 break;
        }
     };
@@ -142,6 +115,7 @@ app.controller("MainController", ['$scope', function($scope) {
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     }
 }]);
+
 
 function autocomplete(inp, arr) {
     /*the autocomplete function takes two arguments,
@@ -242,11 +216,6 @@ function autocomplete(inp, arr) {
 
 
 function buscarCliente() {
-  let cliente = document.getElementById("clientInput").value;
-  let indexID = clientListName.indexOf(cliente);
-  let ID = clientListId[indexID];
-
-
   $.ajaxSetup({
     headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
   })
@@ -256,7 +225,7 @@ function buscarCliente() {
     url: 'http://localhost:8081/clients/'+ID,
     dataType: 'json',
     beforeSend: function(xhr,settings){
-      //spinner show;
+      
     },
     success: function(response){
       console.log(response);
@@ -302,7 +271,38 @@ function buscarCliente() {
   });
 }
 
-
-
-autocomplete(document.getElementById("clientInput"), clientListName);
+function searchClientName(){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      scope.clientList = response;
+      console.log(scope.clientList);
+      scope.showForm = true;
+      scope.showLoading = false;
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      let clientListNames = [];
+      scope.clientList.forEach(function(element,index){
+        clientListNames[index] = element.clientName;
+      });
+      console.log(clientListNames);     
+      autocomplete(document.getElementById('clientInput'),clientListNames);
+    }
+  });
+  
+}
 

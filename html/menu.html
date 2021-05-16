@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     
   </head>
-  <body ng-app='myApp' ng-controller="MainController">
+  <body ng-app='myApp' ng-controller="MainController" id="scope">
     <div class='headerColor' style="background-color: #000066;">manolon</div>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -36,7 +36,7 @@
             <a class="nav-link" href="#">Calendario</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" ng-click href="#">Registro de Ventas</a>
+            <a class="nav-link" href="#">Registro de Ventas</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Consultas de Información</a>
@@ -47,17 +47,22 @@
         </ul>
       </div>
     </nav>
-    <div class="containerBox" style="margin-left: 5%;margin-right: 5%;">
+    <div ng-if="showLoading" style="text-align: center; vertical-align: middle; margin-top: 75%;">
+      <div class="spinner-border text-dark" role="status">
+        <span class="sr-only"></span>
+      </div>
+    </div>
+    <div class="containerBox" style="margin-left: 5%;margin-right: 5%;" ng-if="!showLoading">
       <form autocomplete="off">
         <div class="form-row" ng-show="showForm">
           <div class="autocomplete" style="margin-right:20px;">
             <input ng-model="findClient" type="text" class="form-control" id="clientInput" aria-describedby="emailHelp" style="margin-top: 30px;" placeholder="Buscar Cliente">
           </div>
-            <button class="btn btn-primary" style="margin-top: 10px;" onclick="buscarCliente()" ng-click="searchClient()">Buscar</button>
+            <button class="btn btn-primary" style="margin-top: 10px;" ng-click="searchClient()">Buscar</button>
         </div>
         <div class="form-row" ng-show="showCompletedForm">
             <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Cliente</label>
-            <input type="name" readonly class="form-control" id="displayClientInput" aria-describedby="emailHelp" style="margin-top: 5px;" ng-model="clientName">
+            <input type="name" readonly class="form-control" id="displayClientInput" style="margin-top: 5px;" ng-model="clientName">
             <button class="btn btn-success" style="margin-top: 10px;" ng-click="changeClient()">Cambiar Cliente</button>
         </div>
         <div class="form-row" ng-show="showCompletedForm">
