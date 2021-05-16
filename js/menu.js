@@ -59,7 +59,11 @@ $(document).ready(function () {
 });
 
 app.controller("MainController", ['$scope', function($scope) {
-    $scope.options = ["Calendario","Registro de Venta","Consultas de Información"];
+    $scope.options = ["Calendario","Registro de Venta","Nuevo Cliente", "Consultas de Información"];
+    $scope.pricelist = {
+      Público : "1",
+      Mayoreo : "2",
+    }
     $scope.selectedProducts = [];
     $scope.showForm = false;
     $scope.showCompletedForm = false;
@@ -75,13 +79,21 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showCalendar = true;
                 $scope.showForm = false;
                 $scope.showCompletedForm = false;
+                $scope.showNewClient = false; 
                 break;
             
             case 1:
                 $scope.showCalendar = false;
                 $scope.showForm = true;
                 $scope.showCompletedForm = false;
+                $scope.showNewClient = false; 
                 break;
+            case 2:
+              $scope.showCalendar = false;
+              $scope.showForm = false;
+              $scope.showCompletedForm = false;
+              $scope.showNewClient = true; 
+                
        }
     };
 
