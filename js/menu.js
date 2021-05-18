@@ -1,62 +1,11 @@
 console.log("inicio");
 
-let clientListName = [];
-let clientListId = [];
-let warehousesList = [];
-
-$.ajaxSetup({
-  headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
-})
-$.ajax({
-  method: 'GET',
-  jsonp: 'callback',
-  url: 'http://localhost:8081/clients',
-  dataType: 'json',
-  beforeSend: function(xhr,settings){
-    //spinner show;
-  },
-  success: function(response){
-    response.forEach(element => {
-      clientListName.push(element.clientName);
-      clientListId.push(element.id);
-    })
-  },
-  error: function(xhr,status,errorThrown) {
-    console.log("Error");
-  },
-  complete: function(xhr, status){
-    //spinner hide;
-  }
-});
-
-
-
-
-console.log("fin");
-
-
-
 var app = angular.module("myApp", []);
+var scope;
 
-$(document).ready(function () {
-  $('#datepicker').datepicker({
-    dateFormat: 'dd-mm-yy'
-  });
-  $('#datepicker2').datepicker({
-    dateFormat: 'dd-mm-yy'
-  });
-  $('.timepicker').timepicker({
-    timeFormat: 'h:mm p',
-    interval: 60,
-    minTime: '10',
-    maxTime: '6:00pm',
-    defaultTime: '11',
-    startTime: '10:00',
-    dynamic: false,
-    dropdown: true,
-    scrollbar: true
-  });
-});
+window.onload = function(){
+  scope = angular.element($('#scope')).scope();
+}
 
 app.controller("MainController", ['$scope', function($scope) {
     $scope.options = ["Calendario","Registro de Venta","Nuevo Cliente", "Consultas de Información"];
@@ -68,9 +17,14 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.showForm = false;
     $scope.showCompletedForm = false;
     $scope.showCalendar = true;
+    $scope.showLoading = false;
     $scope.findClient = "";
+    $scope.clientAddress = "";
     $scope.addedProduct = "";
-
+    $scope.clientPhone = "";
+    $scope.clientList = [];
+    $scope.warehousesList = [];
+    
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
        console.log(optionPos);
@@ -84,9 +38,10 @@ app.controller("MainController", ['$scope', function($scope) {
             
             case 1:
                 $scope.showCalendar = false;
-                $scope.showForm = true;
+                $scope.showLoading = true;
+                $scope.showForm = false;
                 $scope.showCompletedForm = false;
-                $scope.showNewClient = false; 
+                searchClientName();
                 break;
             case 2:
               $scope.showCalendar = false;
@@ -98,17 +53,30 @@ app.controller("MainController", ['$scope', function($scope) {
     };
 
     $scope.searchClient = function (){
+      $scope.showForm = false;
+      $scope.showCompletedForm = true;
         $scope.showForm = false;
-        $scope.showCompletedForm = true;
+        $scope.showLoading = true;
+        $scope.indexID = '';
         $scope.clientName = document.getElementById("clientInput").value;
-        $scope.clientAddress = "Rio Mayo #1382 Col. Santa Teresa";
-        $scope.clientPhone = "686-118-6158";
+        $scope.clientList.forEach(function(element,index,arr){
+          if(arr[index].clientName == $scope.clientName){
+            $scope.indexID = arr[index].id;
+          }
+        });
+        $scope.warehousesNames = [];
+        getCompletedFormInfo();
     }
 
     $scope.changeClient = function(){
         $scope.showForm = true;
         $scope.showCompletedForm = false;
         $scope.clientName = "";
+        let clientListNames = [];
+        scope.clientList.forEach(function(element,index){
+          clientListNames[index] = element.clientName;
+        });
+        autocomplete(document.getElementById('clientInput'),clientListNames);
     }
 
     $scope.addProducts = function(){
@@ -125,6 +93,7 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.increase = function(index){
       $scope.selectedProducts[index].quantity += 1;
     }
+
     $scope.decrease = function(index){
       if($scope.selectedProducts[index].quantity == 1){
         console.log("I am in");
@@ -133,6 +102,7 @@ app.controller("MainController", ['$scope', function($scope) {
         $scope.selectedProducts[index].quantity -= 1;
       }
     }
+
     $scope.delete = function(index){
       $scope.selectedProducts.splice(index,1);
     }
@@ -153,7 +123,9 @@ app.controller("MainController", ['$scope', function($scope) {
       $scope.showForm = true;
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     }
+    
 }]);
+
 
 function autocomplete(inp, arr) {
     /*the autocomplete function takes two arguments,
@@ -253,33 +225,46 @@ function autocomplete(inp, arr) {
   }
 
 
-function buscarCliente() {
-  let cliente = document.getElementById("clientInput").value;
-  let indexID = clientListName.indexOf(cliente);
-  let ID = clientListId[indexID];
-
-
+function getCompletedFormInfo() {
   $.ajaxSetup({
     headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
-  })
+  });
   $.ajax({
     method: 'GET',
     jsonp: 'callback',
-    url: 'http://localhost:8081/clients/'+ID,
+    url: 'http://localhost:8081/clients/'+scope.indexID,
     dataType: 'json',
     beforeSend: function(xhr,settings){
-      //spinner show;
+      
     },
     success: function(response){
       console.log(response);
-      console.log(response.telephones);
-      console.log(response.addresses[0]);
+      scope.clientPhone = response.telephones;
+      scope.clientAddress = response.addresses[0];
+      scope.$apply();
     },
     error: function(xhr,status,errorThrown) {
       console.log("Error");
     },
     complete: function(xhr, status){
-      //spinner hide;
+      $('#datepicker').datepicker({
+        dateFormat: 'dd-mm-yy'
+      });
+      $('#datepicker2').datepicker({
+        dateFormat: 'dd-mm-yy'
+      });
+      console.log("init");
+      $('.timepicker').timepicker({
+        timeFormat: 'h:mm p',
+        interval: 60,
+        minTime: '10',
+        maxTime: '6:00pm',
+        defaultTime: '11',
+        startTime: '10:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+      });
     }
   });
 
@@ -295,26 +280,57 @@ function buscarCliente() {
       //spinner show;
     },
     success: function(response){
-      response.forEach(element => {
-        console.log(element.name);
-        warehousesList.push(element.name);
+      console.log(response);
+      scope.warehousesList = response;
+      scope.warehousesList.forEach(function(element){
+        scope.warehousesNames.push(element.name);
       });
-      console.log(warehousesList);
-      for (let j = 0; j < warehousesList.length; j++){
-        console.log(warehousesList[j]);
-        $('#warehousesSelect').append('<option value=>'+warehousesList[j]+'</option>');
-      }
+      console.log(scope.warehousesNames);
     },
     error: function(xhr,status,errorThrown) {
       console.log("Error");
     },
     complete: function(xhr, status){
-      //spinner hide;
+      console.log('complete in');
+      scope.showCompletedForm = true;
+      scope.showLoading = false;
+      scope.$apply();
     }
   });
 }
 
+function searchClientName(){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      scope.showForm = true;
+      scope.showLoading = false;
+      scope.$apply();
+      console.log(response);
+      scope.clientList = response;
+      console.log(scope.clientList);
+      let clientListNames = [];
+      scope.clientList.forEach(function(element,index){
+        clientListNames[index] = element.clientName;
+      });
+      autocomplete(document.getElementById('clientInput'),clientListNames);
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
 
-
-autocomplete(document.getElementById("clientInput"), clientListName);
+    }
+  });
+  
+}
 
