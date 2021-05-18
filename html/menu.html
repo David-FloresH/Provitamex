@@ -89,8 +89,7 @@
         </div>
         <div class="form-row" ng-show="showCompletedForm">
           <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Almacen</label>
-          <!-- <select style="margin-top: 5px" ng-options="warehouse for warehouse in warehouses" class="form-control" id="warehousesSelect" ng-model='warehouseSelected'></select> -->
-          <select style="margin-top: 5px" class="form-control" id="warehousesSelect" ng-model='warehouseSelected'></select>
+          <select style="margin-top: 5px" ng-options="warehouse for warehouse in warehousesNames" class="form-control" ng-model='warehouseSelected'></select>
         </div>
         <div class="row" ng-show="showCompletedForm">
           <div class="col-8">
