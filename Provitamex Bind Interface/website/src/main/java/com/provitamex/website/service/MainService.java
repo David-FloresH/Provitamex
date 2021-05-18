@@ -38,7 +38,7 @@ public class MainService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+        	e.printStackTrace();
         }
 
 		return warehouses.getValue();
@@ -86,7 +86,7 @@ public class MainService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+        	e.printStackTrace();
         }
 		return orderDetails;
 	}
@@ -100,7 +100,7 @@ public class MainService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+        	e.printStackTrace();
         }
 		return clients.getValue();
 	}
@@ -114,13 +114,13 @@ public class MainService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+        	e.printStackTrace();
         }
 		return clientDetails;
 	}
 	
-	public String setNewClient() {
-		String clientinfo= "{\"LegalName\": \"DavidFlores\", \"CommercialName\": \"David SA de CV\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \"4cda058c-2d0a-4635-a7b2-597de294afed\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\"6861880576\",\"Address\":{\"Streetname\": \"hola\", \"ExteriorNumber\": \"2\", \"Colonia\": \"hola2\", \"ZipCode\":\"52522\", \"City\": \"Mexicali\", \"State\": \"Baja California\", \"InteriorNumber\": \"1\"}}";
+	public String setNewClient(String legalName,String pricelistId,String telephone,String streetName,String exteriorNo,String colonia,String zipCode,String city,String state, String interiorNo) {
+		String clientinfo= "{\"LegalName\": \""+legalName+"\", \"CommercialName\": \""+legalName+"\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \""+pricelistId+"\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\""+telephone+"\",\"Address\":{\"Streetname\": \""+streetName +"\", \"ExteriorNumber\": \""+exteriorNo+"\", \"Colonia\": \""+colonia+"\", \"ZipCode\":\""+zipCode+"\", \"City\": \""+city+"\", \"State\": \""+state+"\", \"InteriorNumber\": \""+interiorNo+"\"}}";
 		String clientid= "";
 		try {
 			System.out.println(clientinfo);
@@ -128,7 +128,7 @@ public class MainService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+        	e.printStackTrace();
         }
 		return clientid;
 	}
@@ -142,7 +142,7 @@ public class MainService {
         }
         catch (Exception e)
         {
-            System.out.println(e);
+        	e.printStackTrace();
         }
 		return clientid;
 	}
