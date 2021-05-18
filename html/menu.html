@@ -39,10 +39,10 @@
             <a class="nav-link" href="#">Registro de Ventas</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Nuevo Cliente</a>
+            <a class="nav-link" href="#">Consulta de información</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Consultas de Información</a>
+            <a class="nav-link btn"   data-bs-toggle="collapse" href="#collapseClient" role="button" aria-expanded="false" aria-controls="collapseClient">Clientes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link disabled" href="#"></a>
@@ -50,6 +50,128 @@
         </ul>
       </div>
     </nav>
+<<<<<<< Updated upstream
+=======
+
+    <div class="collapse" id="collapseClient" style = "position: absolute; top: 7%; left: 50%; size:20%; ">
+        <div class = "row">
+            <ul style="list-style-type:none; padding-left:0%">
+              <li>
+                <a class="nav-link" href="#" style="font-size: 15px;color: rgb(255, 255, 255);"   data-bs-toggle="modal" data-bs-target="#ModalNewClient" ng-click= "NewClient()" >Nuevo Cliente</a>
+              </li>
+            </ul>
+        </div>
+     </div>
+     
+    <div class="modal fade" id="ModalNewClient" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalLabel">Nuevo Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
+              <div class="spinner-border text-dark" role="status">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+            <div ng-if= "! showLoadingModal">
+            <div class = "row">
+              <label style = "font-weight: bold; margin-top: 15px; margin-bottom: 15px; text-align: center;"> Ingresa la información del cliente </label>
+           </div>
+           <div class = "row" style="margin-top: 2%;" >
+              <label> Nombre:</label>
+           </div> 
+           <div class = "row" >
+              <div class = "col-13">
+                <input ng-model="NewClientInputPC.NewClientName" type="text" class="form-control" id="InputNameNewClient" required>
+              </div>
+           </div> 
+           <div class = "row" style="margin-top: 2%;" >
+             <label> Calle:</label>
+           </div>
+           <div class = "row" >
+             <div class ="col-13">
+             <input ng-model="NewClientInputPC.NewClientStreet" type="text" class="form-control" id= "InputStreetNewClient" required>
+             </div>
+           </div>
+           <div class = "row" style="margin-top: 2%;" >
+              <div class = "col-6">
+                <label> Num. Ext.:</label>
+              </div>
+              <div class = "col-6">
+                <label>Num. Int.:</label>
+              </div>
+           </div>
+           <div class= "row" >
+             <div class = "col-6">
+                <input ng-model="NewClientInputPC.NewClientExtNumber" type ="text"  class= "form-control" id="InputExtNumNewClient" required>
+             </div>
+             <div class= "col-6">
+               <input  ng-model= "NewClientInputPC.NewClientIntNumber" type ="text" class="form-control" id="InputIntNumNewClient" required>
+             </div>
+           </div>
+           <div  class= "row"  style="margin-top: 2%;">
+             <label> Colonia: </label>
+           </div>
+           <div  class="row" >
+             <div class = "col-13">
+              <input ng-model="NewClientInputPC.NewClientNeighborhood" type="text" class="form-control" id="InputNeighborhoodNewClient" required>
+             </div>
+           </div>
+           <div class ="row" style="margin-top: 2%;">
+             <div class = "col-6">
+               <label> Ciudad:</label>
+             </div>
+             <div class = "col-6"> 
+               <label> Código Postal: </label>
+             </div>
+           </div>
+           <div class= "row">
+             <div class = "col-6">
+               <input ng-model="NewClientInputPC.NewClientCity" type="text" class = "form-control" id= "InputCityNewClient" required >
+             </div>
+             <div class = "col-6">
+               <input ng-model = "NewClientInputPC.NewClientZipCode" type="text" class= "form-control" id="InputZipCodeNewClient" required>
+             </div>
+           </div>
+           <div class = "row" style="margin-top: 2%;">
+             <label>Estado:</label>
+           </div>
+           <div class = "row">
+             <div class = "col-13">
+               <input ng-model= "NewClientInputPC.NewClientState" type = "text" class = "form-control" id= "InputStateNewClient" required> 
+             </div>
+           </div>
+           <div class = "row" style="margin-top: 2%;" >
+            <label> Teléfono:</label>
+           </div>
+           <div class= "row" >
+             <div class = "col-13">
+               <input ng-model="NewClientInputPC.NewClientTelephone" type="text" class= "form-control" id= "InputTelephoneNewClient" required >
+             </div>
+           </div>
+           <div class = "row" style="margin-top: 2%;">
+             <label>Lista de Precios: </label>
+           </div>
+           <div class = "row">
+             <div class = "col-13">
+               <select ng-model="NewClientInputPC.SelectedPriceList"  type="button" ng-options="x for (x, y) in pricelist" class = "form-select"> 
+               </select>
+             </div>
+           </div>        
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" ng-click ="RegisterNewClient2()"  >Guardar </button>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+>>>>>>> Stashed changes
     <div ng-if="showLoading" style="text-align: center; vertical-align: middle; margin-top: 75%;">
       <div class="spinner-border text-dark" role="status">
         <span class="sr-only"></span>
@@ -125,7 +247,7 @@
         <button class="btn btn-primary" ng-click="sendForm()">Enviar</button>
       </div>
     
-      <div ng-show="showNewClient">
+      <div ng-show="showNewClient" >
        <div class = "row">
           <label style = "font-weight: bold; margin-top: 15px; margin-bottom: 15px; text-align: center;"> Ingresa la información del cliente </label>
        </div>
@@ -134,7 +256,7 @@
        </div> 
        <div class = "row" >
           <div class = "col-13">
-            <input ng-model="NewClientName" type="text" class="form-control" id="InputNameNewClient" required>
+            <input ng-model="NewClientInputMobile.NewClientName" type="text" class="form-control" id="InputNameNewClient" required>
           </div>
        </div> 
        <div class = "row" style="margin-top: 2%;" >
@@ -142,7 +264,7 @@
        </div>
        <div class = "row" >
          <div class ="col-13">
-         <input ng-model="NewClientStreet" type="text" class="form-control" id= "InputStreetNewClient" required>
+         <input ng-model="NewClientInputMobile.NewClientStreet" type="text" class="form-control" id= "InputStreetNewClient" required>
          </div>
        </div>
        <div class = "row" style="margin-top: 2%;" >
@@ -155,10 +277,10 @@
        </div>
        <div class= "row" >
          <div class = "col-6">
-            <input ng-model="NewClientExtNumber" type ="text"  class= "form-control" id="InputExtNumNewClient" required>
+            <input ng-model="NewClientInputMobile.NewClientExtNumber" type ="text"  class= "form-control" id="InputExtNumNewClient" required>
          </div>
          <div class= "col-6">
-           <input  ng-model= "NewClientIntNumber" type ="text" class="form-control" id="InputIntNumNewClient" required>
+           <input  ng-model= "NewClientInputMobile.NewClientIntNumber" type ="text" class="form-control" id="InputIntNumNewClient" required>
          </div>
        </div>
        <div  class= "row"  style="margin-top: 2%;">
@@ -166,7 +288,7 @@
        </div>
        <div  class="row" >
          <div class = "col-13">
-          <input ng-model="NewClientNeighborhood" type="text" class="form-control" id="InputNeighborhoodNewClient" required>
+          <input ng-model="NewClientInputMobile.NewClientNeighborhood" type="text" class="form-control" id="InputNeighborhoodNewClient" required>
          </div>
        </div>
        <div class ="row" style="margin-top: 2%;">
@@ -179,10 +301,10 @@
        </div>
        <div class= "row">
          <div class = "col-6">
-           <input ng-model="NewClientCity" type="text" class = "form-control" id= "InputCityNewClient" required >
+           <input ng-model="NewClientInputMobile.NewClientCity" type="text" class = "form-control" id= "InputCityNewClient" required >
          </div>
          <div class = "col-6">
-           <input ng-model = "NewClientZipCode" type="text" class= "form-control" id="InputZipCodeNewClient" required>
+           <input ng-model = "NewClientInputMobile.NewClientZipCode" type="text" class= "form-control" id="InputZipCodeNewClient" required>
          </div>
        </div>
        <div class = "row" style="margin-top: 2%;">
@@ -190,7 +312,7 @@
        </div>
        <div class = "row">
          <div class = "col-13">
-           <input ng-model= "NewClientState" type = "text" class = "form-control" id= "InputStateNewClient" required> 
+           <input ng-model= "NewClientInputMobile.NewClientState" type = "text" class = "form-control" id= "InputStateNewClient" required> 
          </div>
        </div>
        <div class = "row" style="margin-top: 2%;" >
@@ -198,7 +320,7 @@
        </div>
        <div class= "row" >
          <div class = "col-13">
-           <input ng-model="NewClientTelephone" type="text" class= "form-control" id= "InputTelephoneNewClient" required >
+           <input ng-model="NewClientInputMobile.NewClientTelephone" type="text" class= "form-control" id= "InputTelephoneNewClient" required >
          </div>
        </div>
        <div class = "row" style="margin-top: 2%;">
@@ -206,11 +328,13 @@
        </div>
        <div class = "row">
          <div class = "col-13">
-           <select ng-model="selectedPriceList"  type="button" ng-options="x for (x, y) in pricelist" class = "form-select"> 
+           <select ng-model="NewClientInputMobile.SelectedPriceList"  type="button" ng-options="x for (x, y) in pricelist" class = "form-select"> 
            </select>
          </div>
        </div>
-
+       <div class ="row"  style="margin-top: 3%;"> 
+          <button type="button" class="btn btn-primary btn-block" ng-click ="RegisterNewClient()" style ="max-width: 80%; margin-left: 10%;" >Registrar Cliente</button>
+        </div>
 
       </div>
    
