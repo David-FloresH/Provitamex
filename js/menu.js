@@ -1,15 +1,39 @@
 console.log("inicio");
 
+$.ajax({
+  method: 'POST',
+  jsonp: 'callback',
+  url: 'http://localhost:8081/newclient',
+  contentType: "application/json; charset=utf-8",
+  dataType: 'json',
+  data: JSON.stringify({
+    legalName: "TestUser",
+    pricelistId: "4cda058c-2d0a-4635-a7b2-597de294afed",
+    telephone: "6861880576",
+    streetName: "Cagliari",
+    exteriorNo: "2267",
+    colonia: "Bilbao",
+    zipCode: "21254" ,
+    city: "Mexicali",
+    state: "Baja California",
+    interiorNo: "1"
+  }),
+  beforeSend: function(xhr,settings){
+    //spinner show;
+  },
+  success: function(response){
+    console.log(response);
+  },
+  error: function(xhr,status,errorThrown) {
+    console.log("Error");
+  },
+  complete: function(xhr, status){
+    //spinner hide;
+  }
+});
+
 var app = angular.module("myApp", []);
 var scope;
-
-window.onload = function(){
-  scope = angular.element($('#scope')).scope();
-}
-
-window.onload = function(){
-  scope = angular.element($('#scope')).scope();
-}
 
 window.onload = function(){
   scope = angular.element($('#scope')).scope();
@@ -35,9 +59,7 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.warehousesList = [];
     $scope.clientListNames = [];
 
-    
-    $scope.NewClient = function(){
-      $scope.NewClientInputPC ={
+    $scope.NewClientInputMobile = {
         NewClientName : "",  
         SelectedPriceList:  "", 
         NewClientTelephone: "" , 
@@ -47,37 +69,9 @@ app.controller("MainController", ['$scope', function($scope) {
         NewClientZipCode:"",
         NewClientCity: "", 
         NewClientState:"", 
-        NewClientIntNumber: ""   
-        }
+        NewClientIntNumber: "" 
     }
 
-    $scope.NewClientInputPC ={
-        NewClientName : "",  
-        SelectedPriceList:  "", 
-        NewClientTelephone: "" , 
-        NewClientStreet: "", 
-        NewClientExtNumber : "",  
-        NewClientNeighborhood:"", 
-        NewClientZipCode:"",
-        NewClientCity: "", 
-        NewClientState:"", 
-        NewClientIntNumber: ""   
-    }
-
-    $scope.NewClientInputMobile ={
-        NewClientName : "",  
-        SelectedPriceList:  "", 
-        NewClientTelephone: "" , 
-        NewClientStreet: "", 
-        NewClientExtNumber : "",  
-        NewClientNeighborhood:"", 
-        NewClientZipCode:"",
-        NewClientCity: "", 
-        NewClientState:"", 
-        NewClientIntNumber: ""  
-    }
-
-    
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
        console.log(optionPos);
@@ -101,7 +95,6 @@ app.controller("MainController", ['$scope', function($scope) {
               $scope.showForm = false;
               $scope.showCompletedForm = false;
               $scope.showNewClient = true; 
-                
        }
     };
 
@@ -121,16 +114,6 @@ app.controller("MainController", ['$scope', function($scope) {
         getCompletedFormInfo();
     }
     
-    $scope.RegisterNewClient = function (){
-      validate($scope.NewClientInputMobile)
-    }
-
-    $scope.RegisterNewClient2 = function (){
-     validate($scope.NewClientInputPC)
-    }
-    
-
-
     $scope.changeClient = function(){
         $scope.showForm = true;
         $scope.showCompletedForm = false;
@@ -186,6 +169,29 @@ app.controller("MainController", ['$scope', function($scope) {
       $scope.showForm = true;
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     }
+
+    $scope.NewClient = function(){
+      $scope.NewClientInputPC = {
+        NewClientName: "",  
+        SelectedPriceList:  "", 
+        NewClientTelephone: "" , 
+        NewClientStreet: "", 
+        NewClientExtNumber : "",  
+        NewClientNeighborhood:"", 
+        NewClientZipCode:"",
+        NewClientCity: "", 
+        NewClientState:"", 
+        NewClientIntNumber: ""   
+        }
+    }
+    
+    $scope.RegisterNewClient = function (){
+      validate($scope.NewClientInputMobile);
+    }
+
+    $scope.RegisterNewClient2 = function (){
+     validate($scope.NewClientInputPC)
+    }
     
 }]);
 
@@ -202,7 +208,6 @@ function validate (clientInput)
         valid = false;
         break; 
       }
-
   }
     console.log(valid)
     if (valid == true)
@@ -391,7 +396,6 @@ function getCompletedFormInfo() {
   }
 
 function buscarCliente() {
-
   $.ajaxSetup({
     headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
   });
@@ -466,64 +470,6 @@ function buscarCliente() {
   });
 }
 
-function NewClientRequest(NewClientInput){
-
- // Swal.fire("¡Registro exitoso!", "Se ha registrado el cliente exitosamente", "success");
-  $.ajaxSetup({
-    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
-  })
-  $.ajax({
-    method: 'POST',
-    jsonp: 'callback',
-    url: 'http://localhost:8081/',
-    data: {
-           LegalName: NewClientInput.NewClientName, 
-           CommercialName: NewClientInput.NewClientName, 
-           RFC: "XAXX010101000", 
-           CreditDays: 0, 
-           CreditAmount: 0.0, 
-           PriceListID: NewClientInput.selectedPriceList, 
-           AccountingNumber: "105-01-001",
-           Telephone: NewClientInput.NewClientTelephone, 
-           Address:
-              {StreetName: NewClientInput.NewClientStreet, 
-              ExteriorNumber : NewClientInput.NewClientExtNumber,  
-              Colonia: NewClientInput.NewClientNeighborhood, 
-              ZipCode: NewClientInput.NewClientZipCode,
-              City: NewClientInput.NewClientCity, 
-              State: NewClientInput.NewClientState, 
-              InteriorNumber: NewClientInput.NewClientIntNumber
-            }
-           }, 
-    dataType: 'json',
-    beforeSend: function(xhr,settings){
-      //spinner show;
-    },
-    success: function(response){
-      console.log(response);
-      console.log();
-      Swal.fire("¡Registro exitoso!", "Se ha registrado el cliente exitosamente", "success");
-      $("ModalNewClient").modal('hide');
-      scope.showLoading = false; 
-      scope.showLoadingModal = false;
-      
-      scope.$apply();
-    },
-    error: function(xhr,status,errorThrown) {
-      console.log("Error");
-      Swal.fire("Error", "Ha ocurrido un error, intente de nuevo", "error");
-      scope.showLoading = false; 
-      scope.showLoadingModal = false;
-      scope.$apply();
-     
-
-    },
-    complete: function(xhr, status){
-    }
-  });
-
-}
-
 function searchClientName(){
   $.ajaxSetup({
     headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
@@ -557,3 +503,47 @@ function searchClientName(){
     }
   });
 }
+
+function NewClientRequest(NewClientInput){
+   $.ajax({
+     method: 'POST',
+     jsonp: 'callback',
+     url: 'http://localhost:8081/newclient',
+     contentType: "application/json; charset=utf-8",
+     dataType: 'json',
+     data: JSON.stringify({
+          LegalName: NewClientInput.NewClientName, 
+          PriceListID: NewClientInput.selectedPriceList, 
+          Telephone: NewClientInput.NewClientTelephone, 
+          StreetName: NewClientInput.NewClientStreet, 
+          ExteriorNumber : NewClientInput.NewClientExtNumber,  
+          Colonia: NewClientInput.NewClientNeighborhood, 
+          ZipCode: NewClientInput.NewClientZipCode,
+          City: NewClientInput.NewClientCity, 
+          State: NewClientInput.NewClientState, 
+          InteriorNumber: NewClientInput.NewClientIntNumber   
+        }),
+     beforeSend: function(xhr,settings){
+       //spinner show;
+     },
+     success: function(response){
+       console.log(response);
+       console.log();
+       Swal.fire("¡Registro exitoso!", "Se ha registrado el cliente exitosamente", "success");
+       $("ModalNewClient").modal('hide');
+       scope.showLoading = false; 
+       scope.showLoadingModal = false;
+       scope.$apply();
+     },
+     error: function(xhr,status,errorThrown) {
+       console.log(errorThrown);
+       Swal.fire("Error", "Ha ocurrido un error, intente de nuevo", "error");
+       scope.showLoading = false; 
+       scope.showLoadingModal = false;
+       scope.$apply();
+     },
+     complete: function(xhr, status){
+     }
+   });
+ 
+ }
