@@ -1,5 +1,9 @@
-console.log("inicio");
 
+
+console.log("inicio");
+let newProductID = "";
+let newProductInventory = "";
+let newProductPrice = "";
 // $.ajax({
 //   method: 'POST',
 //   jsonp: 'callback',
@@ -60,6 +64,7 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.warehousesList = [];
     $scope.clientListNames = [];
     $scope.selectedProducts = [];
+    $scope.completeProductList = [];
 
     $scope.NewClientInputMobile = {
         NewClientName : "",  
@@ -90,6 +95,7 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showLoading = true;
                 $scope.showForm = false;
                 $scope.showCompletedForm = false;
+                $scope.showNewClient = false;
                 searchClientName();
                 break;
             case 2:
@@ -128,26 +134,47 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.addProducts = function(){
+      console.log($scope.selectedProducts);
+      console.log(document.getElementById("autocompleteProducts").value);
+      if(($scope.selectedProducts.findIndex(element => element.title == document.getElementById("autocompleteProducts").value)) == -1){
+        $scope.completeProductList.forEach(function(element){
+          if(element.title == document.getElementById("autocompleteProducts").value){
+            newProductID = element.id;
+            newProductInventory = parseInt(element.inventory);
+            newProductPrice = element.price;
+          }
+        })
         $scope.selectedProducts.unshift({
-          id: "",
-          name: $scope.addedProduct,
-          quantity: 1,
-          price: 55
+          id: newProductID,
+          title: document.getElementById("autocompleteProducts").value,
+          qty: 1,
+          price: newProductPrice,
+          inventory: newProductInventory
         });
-
+        document.getElementById("autocompleteProducts").value = "";
         $scope.addedProduct = '';
+      }
+      else{
+        Swal.fire("Error", "Producto ya agregado.", "error");
+        document.getElementById("autocompleteProducts").value = "";
+      }
+      
     }
 
     $scope.increase = function(index){
-      $scope.selectedProducts[index].quantity += 1;
+      console.log($scope.selectedProducts[index].qty);
+      console.log($scope.selectedProducts[index].qty);
+      if($scope.selectedProducts[index].qty < $scope.selectedProducts[index].inventory){
+        $scope.selectedProducts[index].qty += 1;
+      }
     }
 
     $scope.decrease = function(index){
-      if($scope.selectedProducts[index].quantity == 1){
+      if($scope.selectedProducts[index].qty == 1){
         console.log("I am in");
       }
       else{
-        $scope.selectedProducts[index].quantity -= 1;
+        $scope.selectedProducts[index].qty -= 1;
       }
     }
 
@@ -158,7 +185,7 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.sendForm = function(){
       $scope.totalSale = 0;
       $scope.selectedProducts.forEach(product => {
-        $scope.totalSale += (product.quantity*product.price);
+        $scope.totalSale += (parseFloat(product.qty*product.price));
       })
       $('#staticBackdrop').modal('show');
       console.log("enviar");
@@ -451,6 +478,8 @@ function getProductList(warehouse) {
       //spinner show;
     },
     success: function(response){
+      console.log(response);
+      scope.completeProductList = response;
       response.forEach(function(element){
         inventoryProducts.push(element.title);
       });
