@@ -1,9 +1,15 @@
 package com.provitamex.website.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +31,8 @@ import com.provitamex.website.model.WarehouseList;
 @Service
 public class MainService {
 	
+	Logger logger = LogManager.getLogger("Provitamex");
+
 	@Autowired
 	ApiService apiservice;
 	
@@ -38,6 +46,7 @@ public class MainService {
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while getting locations. Full stack trace: ",e);
         	e.printStackTrace();
         }
 
@@ -54,9 +63,12 @@ public class MainService {
             Gson g = new Gson(); 
             products = g.fromJson(entity, Product2[].class);
             productsList= Arrays.asList(products);
+            Stream<Product2> stream= productsList.stream().filter(p -> Double.parseDouble(p.getInventory()) > 0.000000);
+            productsList= stream.collect(Collectors.toList());
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while getting products in warehouse. Full stack trace: ",e);
             e.printStackTrace();
         }
 		return productsList;
@@ -72,6 +84,7 @@ public class MainService {
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while getting orders. Full stack trace: ",e);
             e.printStackTrace();
         }
 		return orders.getValue();
@@ -86,6 +99,7 @@ public class MainService {
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while getting details of an order. Full stack trace: ",e);
         	e.printStackTrace();
         }
 		return orderDetails;
@@ -100,6 +114,7 @@ public class MainService {
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while getting clients. Full stack trace: ",e);
         	e.printStackTrace();
         }
 		return clients.getValue();
@@ -114,6 +129,7 @@ public class MainService {
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while getting details of a client. Full stack trace: ",e);
         	e.printStackTrace();
         }
 		return clientDetails;
@@ -121,29 +137,54 @@ public class MainService {
 	
 	public String setNewClient(String legalName,String pricelistId,String telephone,String streetName,String exteriorNo,String colonia,String zipCode,String city,String state, String interiorNo) {
 		String clientinfo= "{\"LegalName\": \""+legalName+"\", \"CommercialName\": \""+legalName+"\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \""+pricelistId+"\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\""+telephone+"\",\"Address\":{\"Streetname\": \""+streetName +"\", \"ExteriorNumber\": \""+exteriorNo+"\", \"Colonia\": \""+colonia+"\", \"ZipCode\":\""+zipCode+"\", \"City\": \""+city+"\", \"State\": \""+state+"\", \"InteriorNumber\": \""+interiorNo+"\"}}";
-		String clientid= "";
+		String clientId= "";
 		try {
 			System.out.println(clientinfo);
-            clientid= apiservice.postRequest("https://api.bind.com.mx/api/Clients",clientinfo);
+            clientId= apiservice.postRequest("https://api.bind.com.mx/api/Clients",clientinfo);
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while setting new client. Full stack trace: ",e);
         	e.printStackTrace();
         }
-		return clientid;
+		return clientId;
 	}
 	
-	public String setNewOrder() {
-		String clientinfo= "{\"LegalName\": \"DavidFlores\", \"CommercialName\": \"David SA de CV\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \"4cda058c-2d0a-4635-a7b2-597de294afed\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\"6861880576\",\"Address\":{\"Streetname\": \"hola\", \"ExteriorNumber\": \"2\", \"Colonia\": \"hola2\", \"ZipCode\":\"52522\", \"City\": \"Mexicali\", \"State\": \"Baja California\", \"InteriorNumber\": \"1\"}}";
-		String clientid= "";
+	public String setNewOrder(String addressId,String clientId,String locationId,String pricelistId,String warehouseId,String products,String comments) {
+		Date date= new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
+		String orderDate= formatter.format(date);
+		//debo ver como formatear products dinamicamente
+		String orderinfo= "{\"AddressID\": \""+addressId+"\", \"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+products+"],\"Comments\": \""+comments+"\"}";
+		String orderId= "";
 		try {
-			System.out.println(clientinfo);
-            clientid= apiservice.postRequest("https://api.bind.com.mx/api/Clients",clientinfo);
+			System.out.println(orderinfo);
+            orderId= apiservice.postRequest("https://api.bind.com.mx/api/Orders",orderinfo);
         }
         catch (Exception e)
         {
+        	logger.error("An error ocurred while setting new order. Full stack trace: ",e);
         	e.printStackTrace();
         }
-		return clientid;
+		return orderId;
+	}
+	
+	public String setNewInvoice(String clientId,String locationId,String warehouseId,String invoiceDate,String pricelistId,String products,String payments) {
+		Date date= new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
+		String orderDate= formatter.format(date);
+		//debo ver como formatear products dinamicamente
+		String invoiceinfo= "{\"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+products+"]}";
+		String invoiceId= "";
+		try {
+			System.out.println(invoiceinfo);
+            invoiceId= apiservice.postRequest("https://api.bind.com.mx/api/Invoices",invoiceinfo);
+        }
+        catch (Exception e)
+        {
+        	logger.error("An error ocurred while setting new invoice. Full stack trace: ",e);
+        	e.printStackTrace();
+        }
+		return invoiceId;
 	}
 }
