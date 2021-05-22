@@ -502,16 +502,16 @@ function NewClientRequest(NewClientInput){
      contentType: "application/json; charset=utf-8",
      dataType: 'json',
      data: JSON.stringify({
-          LegalName: NewClientInput.NewClientName, 
-          PriceListID: NewClientInput.SelectedPriceList, 
-          Telephone: NewClientInput.NewClientTelephone, 
-          StreetName: NewClientInput.NewClientStreet, 
-          ExteriorNumber : NewClientInput.NewClientExtNumber,  
-          Colonia: NewClientInput.NewClientNeighborhood, 
-          ZipCode: NewClientInput.NewClientZipCode,
-          City: NewClientInput.NewClientCity, 
-          State: NewClientInput.NewClientState, 
-          InteriorNumber: NewClientInput.NewClientIntNumber   
+          legalName: NewClientInput.NewClientName, 
+          pricelistId: NewClientInput.SelectedPriceList, 
+          telephone: NewClientInput.NewClientTelephone, 
+          streetName: NewClientInput.NewClientStreet, 
+          exteriorNo : NewClientInput.NewClientExtNumber,  
+          colonia: NewClientInput.NewClientNeighborhood, 
+          zipCode: NewClientInput.NewClientZipCode,
+          city: NewClientInput.NewClientCity, 
+          state: NewClientInput.NewClientState, 
+          interiorNo: NewClientInput.NewClientIntNumber   
         }),
      beforeSend: function(xhr,settings){
        //spinner show;
