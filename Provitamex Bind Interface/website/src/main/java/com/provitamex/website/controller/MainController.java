@@ -1,6 +1,8 @@
 package com.provitamex.website.controller;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +17,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.provitamex.website.model.Client;
 import com.provitamex.website.model.ClientDetails;
 import com.provitamex.website.model.Order;
 import com.provitamex.website.model.OrderDetails;
 import com.provitamex.website.model.Product2;
 import com.provitamex.website.model.Warehouse;
+import com.provitamex.website.model.WarehouseList;
 import com.provitamex.website.service.MainService;
 
 @RestController
@@ -103,22 +107,36 @@ public class MainController {
 		logger.info("NEW CLIENT METHOD CALLED");
 		System.out.println("NEW CLIENT METHOD CALLED");
 		return service.setNewClient(legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
-	}
-	
+	} /*
+	{
+		"addressId":"89f97ac9-8952-411f-9b21-300b5357c3b3",
+		"clientId":"8e1ed991-2231-4617-ab1c-571287483305",
+		"locationId":"bb2f2d8f-4e26-48ec-a562-eb12671de881",
+		"pricelistId":"4cda058c-2d0a-4635-a7b2-597de294afed",
+		"warehouseId":"410fb6eb-539b-4554-b5bf-ddb043b33c57",
+		"products":[
+		      {"id":"1589becc-5c46-4fbf-bbee-12d9b7045d18","price":"270.00","qty":1},
+		      {"id":"5116d09d-80be-4525-b688-3f0b1505b150","price":"97.22","qty":1},
+		      {"id":"c9818525-7b2c-483b-9a25-466016a22285","price":"240.74","qty":3}
+		      	  ],
+		"comments":"01-05-2021 11:00 AM 11:00 AM"
+		}*/
 	@CrossOrigin
 	@PostMapping("/neworder")
 	public String setNewOrder(@RequestBody Map<String,Object> details) {
 		String addressId = String.valueOf(details.get("addressId"));
 		String clientId = String.valueOf(details.get("clientId"));
 		String locationId = String.valueOf(details.get("locationId"));
-		String orderDate = String.valueOf(details.get("orderDate"));
 		String pricelistId = String.valueOf(details.get("pricelistId"));
 		String warehouseId = String.valueOf(details.get("warehouseId"));
 		String products= String.valueOf(details.get("products"));
+		Gson g = new Gson(); 
+        Product2[] productsList = g.fromJson(products, Product2[].class);
+		List<Product2> productsList2 = Arrays.asList(productsList);
 		String comments= String.valueOf(details.get("comments"));
 		logger.info("NEW ORDER METHOD CALLED");
 		System.out.println("NEW ORDER METHOD CALLED");
-		return service.setNewOrder(addressId,clientId,locationId,pricelistId,warehouseId,products,comments);
+		return service.setNewOrder(addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
 	}
 	
 	@CrossOrigin
@@ -127,13 +145,12 @@ public class MainController {
 		String clientId = String.valueOf(details.get("clientId"));
 		String locationId = String.valueOf(details.get("locationId"));
 		String warehouseId = String.valueOf(details.get("warehouseId"));
-		String invoiceDate = String.valueOf(details.get("invoiceDate"));
 		String pricelistId = String.valueOf(details.get("pricelistId"));
 		String products= String.valueOf(details.get("products"));
 		String payments= String.valueOf(details.get("payments"));
 		logger.info("NEW INVOICE METHOD CALLED");
 		System.out.println("NEW INVOICE METHOD CALLED");
-		return service.setNewInvoice(clientId,locationId,warehouseId,invoiceDate,pricelistId,products,payments);
+		return service.setNewInvoice(clientId,locationId,warehouseId,pricelistId,products,payments);
 	}
 	
 	

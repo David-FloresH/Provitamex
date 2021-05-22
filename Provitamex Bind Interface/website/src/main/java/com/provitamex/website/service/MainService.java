@@ -12,14 +12,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.provitamex.website.model.Client;
 import com.provitamex.website.model.ClientDetails;
 import com.provitamex.website.model.ClientList;
-import com.provitamex.website.model.Inventory;
-import com.provitamex.website.model.InventoryList;
 import com.provitamex.website.model.Order;
 import com.provitamex.website.model.OrderDetails;
 import com.provitamex.website.model.OrderList;
@@ -42,7 +39,6 @@ public class MainService {
             String entity= apiservice.getRequest("https://api.bind.com.mx/api/Warehouses");
             Gson g = new Gson(); 
             warehouses = g.fromJson(entity, WarehouseList.class);
-            warehouses.printAll();
         }
         catch (Exception e)
         {
@@ -80,7 +76,6 @@ public class MainService {
             String entity= apiservice.getRequest("https://api.bind.com.mx/api/Orders");
             Gson g = new Gson(); 
             orders = g.fromJson(entity, OrderList.class);
-            orders.printAll();
         }
         catch (Exception e)
         {
@@ -149,15 +144,27 @@ public class MainService {
         }
 		return clientId;
 	}
-	
-	public String setNewOrder(String addressId,String clientId,String locationId,String pricelistId,String warehouseId,String products,String comments) {
+	/*[
+    {
+     "ID": "07116d26-1753-4558-b041-dd15aa9c096d", 
+     "Price": "94.59", 
+     "Qty": "1",
+     "Unit": "pieza"
+    }],
+    */
+	public String setNewOrder(String addressId,String clientId,String locationId,String pricelistId,String warehouseId,List<Product2> products,String comments) {
 		Date date= new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
-		String orderDate= formatter.format(date);
-		//debo ver como formatear products dinamicamente
-		String orderinfo= "{\"AddressID\": \""+addressId+"\", \"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+products+"],\"Comments\": \""+comments+"\"}";
+		String orderDate= formatter.format(date);;
+		String productList="";
+		for(Product2 p: products){
+			productList= productList + "{\"ID\": \""+p.getID()+"\", \"Price\": \""+p.getPrice()+"\", \"Qty\": \""+p.getQty()+"\", \"Unit\": \"pieza\"}, ";
+		}
+		productList= productList.substring(0,productList.length()-1);
+		String orderinfo= "{\"AddressID\": \""+addressId+"\", \"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+productList+"],\"Comments\": \""+comments+"\"}";
 		String orderId= "";
 		try {
+			logger.info(orderinfo);
 			System.out.println(orderinfo);
             orderId= apiservice.postRequest("https://api.bind.com.mx/api/Orders",orderinfo);
         }
@@ -169,12 +176,12 @@ public class MainService {
 		return orderId;
 	}
 	
-	public String setNewInvoice(String clientId,String locationId,String warehouseId,String invoiceDate,String pricelistId,String products,String payments) {
+	public String setNewInvoice(String clientId,String locationId,String warehouseId, String pricelistId,String products,String payments) {
 		Date date= new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
-		String orderDate= formatter.format(date);
+		String invoiceDate= formatter.format(date);
 		//debo ver como formatear products dinamicamente
-		String invoiceinfo= "{\"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+products+"]}";
+		String invoiceinfo= "{\"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+invoiceDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+products+"]}";
 		String invoiceId= "";
 		try {
 			System.out.println(invoiceinfo);
