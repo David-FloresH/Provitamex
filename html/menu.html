@@ -36,7 +36,7 @@
             <a class="nav-link" href="#">Calendario</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Registro de Ventas</a>
+            <a class="nav-link" href="#" ng-click="searchClientNamePC()" data-bs-toggle="modal" data-bs-target="#searchClientModal">Registro de Pedido</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Consulta de información</a>
@@ -60,7 +60,45 @@
             </ul>
         </div>
      </div>
-     
+
+     <div class="modal fade" id="searchClientModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Búsqueda de Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        <div class="modal-body">
+          <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
+            <div class="spinner-border text-dark" role="status">
+              <span class="sr-only"></span>
+            </div>
+          </div>
+          <div class="form-row" ng-if="!showLoadingModal">
+            <div class="autocomplete" style="margin-right:20px;">
+              <input ng-model="findClient" type="text" class="form-control" id="clientInputPC" aria-describedby="emailHelp" style="margin-top: 30px;" placeholder="Buscar Cliente">
+            </div>
+              <button class="btn btn-primary" style="margin-top: 10px;" data-bs-toggle="modal" href="#newOrderModal" data-bs-dismiss="modal" data-bs-toggle="#newOrderModal">Buscar</button>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="newOrderModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Nuevo Pedido</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        <div class="modal-body">
+          
+        </div>
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" id="ModalNewClient" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">

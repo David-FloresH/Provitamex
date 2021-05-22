@@ -4,37 +4,6 @@ console.log("inicio");
 let newProductID = "";
 let newProductInventory = "";
 let newProductPrice = "";
-// $.ajax({
-//   method: 'POST',
-//   jsonp: 'callback',
-//   url: 'http://localhost:8081/newclient',
-//   contentType: "application/json; charset=utf-8",
-//   dataType: 'json',
-//   data: JSON.stringify({
-//     legalName: "TestUser",
-//     pricelistId: "4cda058c-2d0a-4635-a7b2-597de294afed",
-//     telephone: "6861880576",
-//     streetName: "Cagliari",
-//     exteriorNo: "2267",
-//     colonia: "Bilbao",
-//     zipCode: "21254" ,
-//     city: "Mexicali",
-//     state: "Baja California",
-//     interiorNo: "1"
-//   }),
-//   beforeSend: function(xhr,settings){
-//     //spinner show;
-//   },
-//   success: function(response){
-//     console.log(response);
-//   },
-//   error: function(xhr,status,errorThrown) {
-//     console.log("Error");
-//   },
-//   complete: function(xhr, status){
-//     //spinner hide;
-//   }
-// });
 
 var app = angular.module("myApp", []);
 var scope;
@@ -108,6 +77,11 @@ app.controller("MainController", ['$scope', function($scope) {
               $scope.showNewClient = true; 
        }
     };
+    $scope.searchClientNamePC = function(){
+      document.getElementById("clientInputPC").value = "";
+      searchClientNameForPC();
+      $scope.showLoadingPC = true;
+    }
 
     $scope.searchClient = function (){
       $scope.showForm = false;
@@ -191,16 +165,10 @@ app.controller("MainController", ['$scope', function($scope) {
         $scope.totalSale += (parseFloat(product.qty*product.price));
       })
       $('#staticBackdrop').modal('show');
-      sendNewOrder();
-      console.log("enviar");
     }
 
     $scope.finishOrder = function(){
-      $('#staticBackdrop').modal('hide');
-      document.getElementById("clientInput").value = "";
-      $scope.showCompletedForm = false;
-      $scope.showForm = true;
-      Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
+      sendNewOrder();
     }
 
     $scope.changeWarehouse = function(warehouse){
@@ -464,6 +432,39 @@ function searchClientName(){
   });
 }
 
+function searchClientNameForPC(){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      scope.showLoadingModal = false;
+      scope.clientList = response;
+      console.log(scope.clientList);
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      let clientListNames = [];
+      scope.clientList.forEach(function(element,index){
+        clientListNames[index] = element.clientName;
+      });
+      console.log(clientListNames);     
+      autocomplete(document.getElementById('clientInputPC'),clientListNames);
+    }
+  });
+}
+
 function getProductList(warehouse) {
   let inventoryProducts = [];
   $.ajaxSetup({
@@ -500,7 +501,7 @@ function sendNewOrder() {
   let newOrderDate = document.getElementById("startingDate").value + " " + document.getElementById("startingTime").value + " " + document.getElementById("finishingTime").value;
   console.log(newOrderDate);
   scope.selectedProducts.forEach(element => {
-    sentProducts.push({id: element.id,price:element.price,qty:element.qty})
+    sentProducts.push({ID:element.id,Price:element.price,Qty:element.qty})
   });
   let data = {
     addressId: scope.clientAddress,
@@ -535,8 +536,15 @@ function sendNewOrder() {
     },
     success: function(response){
       console.log(response);
+      $('#staticBackdrop').modal('hide');
+      document.getElementById("clientInput").value = "";
+      $scope.showCompletedForm = false;
+      $scope.showForm = true;
+      Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
     },
     error: function(xhr,status,errorThrown) {
+      $('#staticBackdrop').modal('hide');
+      Swal.fire("Error", "Ha ocurrido un error.", "error");
       console.log("Error");
     },
     complete: function(xhr, status){
