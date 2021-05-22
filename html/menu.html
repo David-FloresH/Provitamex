@@ -226,10 +226,10 @@
         </div>
       <div ng-show="showCompletedForm" class="row" ng-repeat="product in selectedProducts" style="margin-top: 5%;">
             <div class="col-8">
-              <input readonly class="form-control" ng-value="product.name">
+              <input readonly class="form-control" ng-value="product.title">
             </div>
             <div class="col-4">
-              <button class="btn btn-light" style="margin-left: 12%" ng-click="decrease($index)">-</button><span class="count"> {{product.quantity}} <button class="btn btn-light" ng-click="increase($index)">+</button>
+              <button class="btn btn-light" style="margin-left: 12%" ng-click="decrease($index)">-</button><span class="count"> {{product.qty}} <button class="btn btn-light" ng-click="increase($index)">+</button>
             </div>
             <div class="row">
               <div class="col-3" style="margin-top: 2.5%;">
@@ -268,24 +268,24 @@
                 Almacen:
               </div>
               <div class="row">
-                {{warehouseSelected}}
+                {{warehouseSelected.name}}
               </div>
               <div class="row" style="margin-top: 3%;">
                 Productos: 
               </div>
               <div ng-repeat="product in selectedProducts" class="row">
                 <div class="col-8">
-                  {{product.name}}
+                  {{product.title}}
                 </div>
-                <div class="col-2">
-                  $ {{(product.quantity) * (product.price)}}
+                <div class="col-3">
+                  $ {{(product.qty) * (product.price)}}
                 </div>
               </div>
               <div class="row" style="margin-top: 5%;">
                 <div class="col-8">
                   Total de Venta:
                 </div>
-                <div class="col-2">
+                <div class="col-3">
                   $ {{totalSale}}
                 </div>
               </div>
