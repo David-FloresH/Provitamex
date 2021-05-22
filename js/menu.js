@@ -60,20 +60,19 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.warehousesList = [];
     $scope.clientListNames = [];
     $scope.selectedProducts = [];
-
+   
     $scope.NewClientInputMobile = {
-        NewClientName : "",  
-        SelectedPriceList:  "", 
-        NewClientTelephone: "" , 
-        NewClientStreet: "", 
-        NewClientExtNumber : "",  
-        NewClientNeighborhood:"", 
-        NewClientZipCode:"",
-        NewClientCity: "", 
-        NewClientState:"", 
-        NewClientIntNumber: "" 
-    }
-
+      NewClientName : "",  
+      SelectedPriceList:  "", 
+      NewClientTelephone: "" , 
+      NewClientStreet: "", 
+      NewClientExtNumber : "",  
+      NewClientNeighborhood:"", 
+      NewClientZipCode:"",
+      NewClientCity: "", 
+      NewClientState:"", 
+      NewClientIntNumber: "" 
+  };
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
        console.log(optionPos);
@@ -90,6 +89,7 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showLoading = true;
                 $scope.showForm = false;
                 $scope.showCompletedForm = false;
+                $scope.showNewClient = false; 
                 searchClientName();
                 break;
             case 2:
@@ -177,10 +177,6 @@ app.controller("MainController", ['$scope', function($scope) {
       getProductList(warehouse);
     }
 
-
-
-
-
     $scope.NewClient = function(){
       $scope.NewClientInputPC = {
         NewClientName: "",  
@@ -193,7 +189,9 @@ app.controller("MainController", ['$scope', function($scope) {
         NewClientCity: "", 
         NewClientState:"", 
         NewClientIntNumber: ""   
-        }
+        };
+
+       
     }
     
     $scope.RegisterNewClient = function (){
@@ -466,6 +464,7 @@ function getProductList(warehouse) {
 
 function NewClientRequest(NewClientInput){
   console.log(NewClientInput);
+ 
    $.ajax({
      method: 'POST',
      jsonp: 'callback',
@@ -473,28 +472,87 @@ function NewClientRequest(NewClientInput){
      contentType: "application/json; charset=utf-8",
      dataType: 'json',
      data: JSON.stringify({
-          LegalName: NewClientInput.NewClientName, 
-          PriceListID: NewClientInput.SelectedPriceList, 
-          Telephone: NewClientInput.NewClientTelephone, 
-          StreetName: NewClientInput.NewClientStreet, 
-          ExteriorNumber : NewClientInput.NewClientExtNumber,  
-          Colonia: NewClientInput.NewClientNeighborhood, 
-          ZipCode: NewClientInput.NewClientZipCode,
-          City: NewClientInput.NewClientCity, 
-          State: NewClientInput.NewClientState, 
-          InteriorNumber: NewClientInput.NewClientIntNumber   
+          legalName: NewClientInput.NewClientName, 
+          pricelistId: NewClientInput.SelectedPriceList, 
+          telephone: NewClientInput.NewClientTelephone, 
+          streetName: NewClientInput.NewClientStreet, 
+          exteriorNo : NewClientInput.NewClientExtNumber,  
+          colonia: NewClientInput.NewClientNeighborhood, 
+          zipCode: NewClientInput.NewClientZipCode,
+          city: NewClientInput.NewClientCity, 
+          state: NewClientInput.NewClientState, 
+          interiorNo: NewClientInput.NewClientIntNumber   
         }),
      beforeSend: function(xhr,settings){
        //spinner show;
      },
      success: function(response){
        console.log(response);
-       console.log();
-       Swal.fire("¡Registro exitoso!", "Se ha registrado el cliente exitosamente", "success");
-       $("#ModalNewClient").modal('hide');
-       scope.showLoading = false; 
-       scope.showLoadingModal = false;
-       scope.$apply();
+       if (response.code != 0){
+          Swal.fire("¡Registro exitoso!", "Se ha registrado el cliente exitosamente", "success");
+          $("#ModalNewClient").modal('hide');
+          scope.showLoading = true; 
+          scope.showLoadingModal = false;
+          scope.showNewClient = false;
+          scope.indexID = response; 
+          console.log('Tu ID es ' + scope.indexID); 
+          scope.clientPhone = NewClientInput.NewClientTelephone;
+          scope.clientAddress = NewClientInput.NewClientStreet + ' '+  NewClientInput.NewClientExtNumber + ' '+  NewClientInput.NewClientNeighborhood + ' '+ NewClientInput.NewClientZipCode + ' '+ NewClientInput.NewClientCity + ' '+ NewClientInput.NewClientState; 
+          scope.priceListID = NewClientInput.SelectedPriceList;
+          scope.clientName = NewClientInput.NewClientName;
+
+          $.ajaxSetup({
+            headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+          })
+          $.ajax({
+            method: 'GET',
+            jsonp: 'callback',
+            url: 'http://localhost:8081/warehouses',
+            dataType: 'json',
+            beforeSend: function(xhr,settings){
+              //spinner show;
+            },
+            success: function(response){
+              console.log(response);
+              scope.warehousesList = response;
+              scope.showCompletedForm = true;
+              scope.showLoading = false;
+              scope.$apply();
+
+              $('#datepicker').datepicker({
+                dateFormat: 'dd-mm-yy'
+              });
+              $('#datepicker2').datepicker({
+                dateFormat: 'dd-mm-yy'
+              });
+              console.log("init");
+              $('.timepicker').timepicker({
+                timeFormat: 'h:mm p',
+                interval: 60,
+                minTime: '10',
+                maxTime: '6:00pm',
+                defaultTime: '11',
+                startTime: '10:00',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true
+              });
+
+            },
+            error: function(xhr,status,errorThrown) {
+            },
+            complete: function(xhr, status){
+              
+            }
+          });
+
+      }
+      else {
+        Swal.fire("Error", "Ingresa el estado y ciudad correctamente", "error");
+        scope.showLoading = false; 
+        scope.showLoadingModal = false;
+        scope.$apply();
+      }
      },
      error: function(xhr,status,errorThrown) {
        console.log(errorThrown);
@@ -504,6 +562,9 @@ function NewClientRequest(NewClientInput){
        scope.$apply();
      },
      complete: function(xhr, status){
+      
      }
    });
+
+   console.log($scope.startingTime + ' ' + $scope.finishingTime);
  }

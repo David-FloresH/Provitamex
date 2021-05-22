@@ -203,10 +203,10 @@
         </div>
         <div class="row" ng-show="showCompletedForm">
           <div class="col-5">
-            Desde: <input type="text" id="datepicker" class="form-control timepicker"/>
+            Desde: <input ng-model = "startingTime" type="text" id="datepicker" class="form-control timepicker"/>
           </div>
           <div class="col-5">
-            Hasta: <input type="text" id="datepicker" class="form-control timepicker"/>
+            Hasta: <input type="text" id="datepicker" ng-model= "finishingTime" class="form-control timepicker"/>
           </div>
         </div>
         <div class="form-row" ng-show="showCompletedForm">
