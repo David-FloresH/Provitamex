@@ -44,7 +44,7 @@ window.onload = function(){
 }
 
 app.controller("MainController", ['$scope', function($scope) {
-    $scope.options = ["Calendario","Registro de Venta","Nuevo Cliente", "Consultas de Información"];
+    $scope.options = ["Calendario","Registro de Pedido","Nuevo Cliente", "Consultas de Información"];
     $scope.pricelist = {
       Público : "f706d48f-1c23-4d4b-8f37-afb803e394a9",
       Mayoreo : "d280c8ee-6226-4cb3-9005-05f3658d4c42",
@@ -55,6 +55,10 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.showCalendar = true;
     $scope.showLoading = false;
     $scope.showLoadingModal = false;
+    $scope.warehouseChanged = false;
+    $scope.startingTime = "";
+    $scope.finishingTime = "";
+    $scope.startingDate = "";
     $scope.findClient = "";
     $scope.clientAddress = "";
     $scope.addedProduct = "";
@@ -162,7 +166,7 @@ app.controller("MainController", ['$scope', function($scope) {
 
     $scope.increase = function(index){
       console.log($scope.selectedProducts[index].qty);
-      console.log($scope.selectedProducts[index].qty);
+      console.log($scope.selectedProducts[index].inventory);
       if($scope.selectedProducts[index].qty < $scope.selectedProducts[index].inventory){
         $scope.selectedProducts[index].qty += 1;
       }
@@ -187,6 +191,7 @@ app.controller("MainController", ['$scope', function($scope) {
         $scope.totalSale += (parseFloat(product.qty*product.price));
       })
       $('#staticBackdrop').modal('show');
+      sendNewOrder();
       console.log("enviar");
     }
 
@@ -199,7 +204,10 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.changeWarehouse = function(warehouse){
+      $scope.locationID = warehouse.locationID;
+      $scope.warehouseID = warehouse.id;
       console.log(warehouse);
+      $scope.warehouseChanged = true;
       getProductList(warehouse);
     }
 
@@ -354,8 +362,6 @@ function autocomplete(inp, arr) {
     });
   }
 
-
-
 function getCompletedFormInfo() {
     $.ajaxSetup({
       headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
@@ -379,10 +385,7 @@ function getCompletedFormInfo() {
         console.log("Error");
       },
       complete: function(xhr, status){
-        $('#datepicker').datepicker({
-          dateFormat: 'dd-mm-yy'
-        });
-        $('#datepicker2').datepicker({
+        $('.datepickerD').datepicker({
           dateFormat: 'dd-mm-yy'
         });
         console.log("init");
@@ -486,6 +489,58 @@ function getProductList(warehouse) {
     },
     complete: function(xhr, status){
       autocomplete(document.getElementById('autocompleteProducts'),inventoryProducts);
+      scope.warehouseChanged = false;
+      scope.$apply();
+    }
+  });
+}
+
+function sendNewOrder() {
+  let sentProducts = [];
+  let newOrderDate = document.getElementById("startingDate").value + " " + document.getElementById("startingTime").value + " " + document.getElementById("finishingTime").value;
+  console.log(newOrderDate);
+  scope.selectedProducts.forEach(element => {
+    sentProducts.push({id: element.id,price:element.price,qty:element.qty})
+  });
+  let data = {
+    addressId: scope.clientAddress,
+    clientId: scope.indexID,
+    locationID: scope.locationID,
+    pricelistId: scope.priceListID,
+    warehouseId: scope.warehouseID,
+    products: sentProducts,
+    comments: newOrderDate
+  }
+  console.log(data);
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  });
+  $.ajax({
+    method: 'POST',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/neworder',
+    contentType: "application/json; charset=utf-8",
+    dataType: 'json',
+    data: JSON.stringify({
+      addressId: scope.clientAddress,
+      clientId: scope.indexID,
+      locationId: scope.locationID,
+      pricelistId: scope.priceListID,
+      warehouseId: scope.warehouseID,
+      products: sentProducts,
+      comments: newOrderDate
+    }),
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+
     }
   });
 }
@@ -593,6 +648,4 @@ function NewClientRequest(NewClientInput){
       
      }
    });
-
-   console.log($scope.startingTime + ' ' + $scope.finishingTime);
  }

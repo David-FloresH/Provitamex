@@ -198,15 +198,15 @@
         <div class="row" ng-show="showCompletedForm">
           <div class="col-5">
             <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Fecha y Hora</label>
-            <input type="text" id="datepicker" class="form-control"/>
+            <input ng-model="startingDate" type="text" id="startingDate" class="form-control datepickerD"/>
           </div>
         </div>
         <div class="row" ng-show="showCompletedForm">
           <div class="col-5">
-            Desde: <input ng-model = "startingTime" type="text" id="datepicker" class="form-control timepicker"/>
+            Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
           </div>
           <div class="col-5">
-            Hasta: <input type="text" id="datepicker" ng-model= "finishingTime" class="form-control timepicker"/>
+            Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
           </div>
         </div>
         <div class="form-row" ng-show="showCompletedForm">
@@ -217,7 +217,7 @@
           <div class="col-8">
             <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Productos</label>
             <div class="autocomplete">
-              <input ng-model="addedProduct" id='autocompleteProducts' type="text" class="form-control" aria-describedby="emailHelp" style="margin-top: 5px;" placeholder="Agrega Produtos">
+              <input ng-disabled="warehouseChanged" ng-model="addedProduct" id='autocompleteProducts' type="text" class="form-control" aria-describedby="emailHelp" style="margin-top: 5px;" placeholder="Agrega Produtos">
             </div>
           </div>
           <div class="col-4">

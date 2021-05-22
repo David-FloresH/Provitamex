@@ -10,7 +10,7 @@ app.controller("MainController", ['$scope', function($scope) {
         console.log($scope.user,$scope.pass);
       }
       else{
-        Swal.fire("Error", "Favor de ingresar todos sus datos.", "Error");
+        Swal.fire("Error", "Favor de ingresar todos sus datos.", "error");
       }
     }
 }]);
