@@ -1,9 +1,11 @@
 package com.provitamex.website.model;
 
 public class Product2 {
+	private String Name;
 	private String Title;
 	private String Price;
 	private String Inventory;
+	private String Qty;
 	private String ID;
 	public String getTitle() {
 		return Title;
@@ -29,5 +31,22 @@ public class Product2 {
 	public void setID(String iD) {
 		ID = iD;
 	}
-
+	public String getName() {
+		return Name;
+	}
+	public void setName(String name) {
+		Name = name;
+	}
+	public String getQty() {
+		return Qty;
+	}
+	public void setQty(String qty) {
+		Qty = qty;
+	}
+	@Override
+	public String toString() {
+		return "Product2 [Name=" + Name + ", Title=" + Title + ", Price=" + Price + ", Inventory=" + Inventory
+				+ ", Qty=" + Qty + ", ID=" + ID + "]";
+	}
+	
 }
