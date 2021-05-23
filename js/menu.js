@@ -538,9 +538,10 @@ function sendNewOrder() {
       console.log(response);
       $('#staticBackdrop').modal('hide');
       document.getElementById("clientInput").value = "";
-      $scope.showCompletedForm = false;
-      $scope.showForm = true;
+      scope.showCompletedForm = false;
+      scope.showForm = true;
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
+      scope.$apply();
     },
     error: function(xhr,status,errorThrown) {
       $('#staticBackdrop').modal('hide');
