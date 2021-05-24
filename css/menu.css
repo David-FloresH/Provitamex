@@ -6,6 +6,20 @@ body {
   font-size: 16px;
 }
 
+
+table, th , td  {
+  border-collapse: collapse;
+  padding: 5px;
+  width:fit-content;
+}
+
+table tr:nth-child(odd) {
+  background-color: #f1f1f1;
+}
+
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
 /* Toggle Styles */
 
 #viewport {
@@ -89,13 +103,13 @@ label {
   display: inline-block;
 }
 
-.containerBox {
+/*.containerBox {
   border-radius: 50px;
   background-color: black;
   padding: 50px;
   width: 80%;
   height:auto;
-}
+}*/
 
 .autocomplete-items {
   position: absolute;

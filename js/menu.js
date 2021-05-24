@@ -1,5 +1,3 @@
-
-
 console.log("inicio");
 let newProductID = "";
 let newProductInventory = "";
@@ -49,12 +47,13 @@ app.controller("MainController", ['$scope', function($scope) {
       Público : "f706d48f-1c23-4d4b-8f37-afb803e394a9",
       Mayoreo : "d280c8ee-6226-4cb3-9005-05f3658d4c42",
     }
-    
+  
     $scope.showForm = false;
     $scope.showCompletedForm = false;
     $scope.showCalendar = true;
     $scope.showLoading = false;
     $scope.showLoadingModal = false;
+    $scope.showLoadingTable = false;
     $scope.warehouseChanged = false;
     $scope.startingTime = "";
     $scope.finishingTime = "";
@@ -69,6 +68,8 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.clientListNames = [];
     $scope.selectedProducts = [];
     $scope.completeProductList = [];
+    $scope.baseUrl = "https://www.google.com/maps/search/?api=1&query="
+    $scope.completeAddress = "";
 
     $scope.NewClientInputMobile = {
       NewClientName : "",  
@@ -81,7 +82,23 @@ app.controller("MainController", ['$scope', function($scope) {
       NewClientCity: "", 
       NewClientState:"", 
       NewClientIntNumber: "" 
-  };
+    };
+
+    $scope.NewClientInputPC = {
+      NewClientName: "",  
+      SelectedPriceList:  "", 
+      NewClientTelephone: "" , 
+      NewClientStreet: "", 
+      NewClientExtNumber : "",  
+      NewClientNeighborhood:"", 
+      NewClientZipCode:"",
+      NewClientCity: "", 
+      NewClientState:"", 
+      NewClientIntNumber: ""   
+      };
+
+     
+
     $scope.filterContent = function() {
        let optionPos = $scope.options.indexOf($scope.selectedOption);
        console.log(optionPos);
@@ -106,6 +123,8 @@ app.controller("MainController", ['$scope', function($scope) {
               $scope.showForm = false;
               $scope.showCompletedForm = false;
               $scope.showNewClient = true; 
+             
+
        }
     };
 
@@ -229,14 +248,102 @@ app.controller("MainController", ['$scope', function($scope) {
     }
     
     $scope.RegisterNewClient = function (){
+      
       validate($scope.NewClientInputMobile);
     }
 
     $scope.RegisterNewClient2 = function (){
-     validate($scope.NewClientInputPC)
+      
+       validate($scope.NewClientInputPC)
+     
+     
+     
+    }
+
+    $scope.showList = function(){
+      $scope.showClientLists = true; 
+      $scope.showLoadingTable= true;
+      getClientsList();
+    }
+
+    $scope.editClient = function(clientEditing){
+     
+      editId = $scope.clientList[clientEditing].id;
+      console.log(editId);
+      getClientsDetails(editId);
+    }
+
+    $scope.deleteClient = function(clientDeleting){
+      deleteId =  $scope.clientList[clientDeleting].id;
+      deletedName = $scope.clientList[clientDeleting].clientName;
+      console.log(deleteId);
+      deleteClient(deletedName, deleteId);
+    }
+
+    $scope.showDetailsBox = function(showDetails){
+      $scope.showLoadingModal = true; 
+      showId= $scope.clientList[showDetails].id;
+      console.log(showId);
+      getClientsDetails(showId);
+
+
+    }
+
+    $scope.closeDetailsModal = function(){
+      $("#ModalClientsDetails").modal('hide');
+      $("#ModalEditClient").modal('show');
+    }
+
+    $scope.EditClientSetup = function(){
+      $scope.editClientInformation = {
+        Id : showId,
+        ClientName : $scope.clientNameDetails,  
+        PriceList:  $scope.clientPhoneDetails, 
+        Telephone: $scope.priceListIdDetails ,
+      }
+
+      editClientRequest($scope.editClientInformation);
+    }
+
+    $scope.getUrl = function(){
+      $scope.completeAddress = $scope.NewClientInputPC.NewClientStreet + ' ' + $scope.NewClientInputPC.NewClientExtNumber + ' ' + $scope.NewClientInputPC.NewClientIntNumber + ',' +$scope.NewClientInputPC.NewClientNeighborhood + ',' + $scope.NewClientInputPC.NewClientState ; 
+      var completeAddressSplitted =  $scope.completeAddress.split(" ");
+      var addressFormat1= ""; 
+      var addressFormat = "";
+      for (var i = 0; i <completeAddressSplitted.length; i++){
+         addressFormat1 = addressFormat1 + completeAddressSplitted[i]; 
+         addressFormat1 = addressFormat1 +"+";
+      }
+      var completeAddressSplitted2  = addressFormat1.split(",");
+      for (var i = 0; i <completeAddressSplitted2.length; i++){
+          addressFormat = addressFormat + completeAddressSplitted2[i]; 
+          addressFormat = addressFormat +"%2C";
+      }
+      url = $scope.baseUrl + addressFormat;
+      document.getElementById('enlace').setAttribute('href',url); 
+    }
+
+    $scope.getUrl2 = function(){
+      $scope.completeAddress = $scope.NewClientInputMobile.NewClientStreet + ' ' + $scope.NewClientInputMobile.NewClientExtNumber + ' ' + $scope.NewClientInputMobile.NewClientIntNumber + ',' +$scope.NewClientInputMobile.NewClientNeighborhood + ',' + $scope.NewClientInputMobile.NewClientState ; 
+      var completeAddressSplitted =  $scope.completeAddress.split(" ");
+      var addressFormat1= ""; 
+      var addressFormat = "";
+      for (var i = 0; i <completeAddressSplitted.length; i++){
+         addressFormat1 = addressFormat1 + completeAddressSplitted[i]; 
+         addressFormat1 = addressFormat1 +"+";
+      }
+      var completeAddressSplitted2  = addressFormat1.split(",");
+      for (var i = 0; i <completeAddressSplitted2.length; i++){
+          addressFormat = addressFormat + completeAddressSplitted2[i]; 
+          addressFormat = addressFormat +"%2C";
+      }
+      url = $scope.baseUrl + addressFormat;
+      console.log(url);
+            document.getElementById('enlace2').setAttribute('href',url); 
     }
     
 }]);
+
 
 
 function validate (clientInput)
@@ -429,6 +536,7 @@ function getCompletedFormInfo() {
       }
     });
   }
+
 
 function searchClientName(){
   $.ajaxSetup({
@@ -649,3 +757,163 @@ function NewClientRequest(NewClientInput){
      }
    });
  }
+
+ function getClientsList(){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      scope.clientList = response;
+      console.log(scope.clientList);
+      scope.showLoadingTable = false;
+      //console.log(scope.clientList[1].clientName);
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+  
+    }
+  });
+} 
+
+function getClientsDetails( ID){
+
+
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  });
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients/'+ID,
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      
+    },
+    success: function(response){
+      console.log(response);
+      scope.clientNameDetails = response.commercialName; 
+      scope.clientPhoneDetails = response.telephones;
+      scope.clientAddressDetails = response.addresses[0];
+      let priceListName = getPriceListName(response.priceListID);
+      scope.priceListIdDetails = priceListName;
+      showDetailsContainer = true;
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+    scope.showLoadingModal = false;
+    scope.$apply()
+    },
+    
+  });
+
+}
+
+function getPriceListName(priceListID){
+  for(let property in scope.pricelist ){
+    console.log("holi");
+     console.log(scope.pricelist[property]);
+    if (scope.pricelist[property] == priceListID)
+
+      return property;
+  }
+}
+
+function deleteClient(Name, ID){
+  Swal.fire({
+    title: '¿Seguro que desea eliminar?',
+    text: "Esta acción no podrá revertirse",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Eliminar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+            $.ajaxSetup({
+              headers: { 'Access-Control-Allow-Origin':'*' , 'Content-Type':'application/json'}
+            });
+            $.ajax({
+              method: 'DELETE',
+              jsonp: 'callback',
+              url: 'http://localhost:8081/deleteclient/'+ID,
+              dataType: 'json',
+              beforeSend: function(xhr,settings){
+                
+              },
+              success: function(response){
+                Swal.fire(
+                  'Cliente Eliminado',
+                  'El cliente '+Name+ 'ha sido eliminado',
+                  'success'
+                )
+              },
+              error: function(xhr,status,errorThrown) {
+                console.log("Error");
+              },
+              complete: function(xhr, status){
+                
+                },
+            });
+    }
+  })
+}
+
+function editClientRequest(clientInfo){
+
+   Swal.fire({
+    title: '¿Seguro que desea editar?',
+    text: "Esta acción no podrá revertirse",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Editar '
+     }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          method: 'PUT',
+          jsonp: 'callback',
+          url: 'http://localhost:8081/client/new',
+          contentType: "application/json; charset=utf-8",
+          dataType: 'json',
+          data: JSON.stringify({
+              id: clientInfo.Id,
+              legalName: clientInfo.ClientName, 
+              pricelistId: clientInfo.PriceList, 
+              telephone: clientInfo.Telephone, 
+              
+            }),
+          beforeSend: function(xhr,settings){
+            //spinner show;
+          },
+          success: function(response){
+            Swal.fire(
+              'Cliente Editado',
+              'El cliente '+clientInfo.ClientName+ 'ha sido editado satisfactoriamente',
+              'success')
+          },
+          error: function(xhr,status,errorThrown) {
+            swal.fire('Error', 'Ocurrió un error, intente de nuevo', 'error');
+          },
+          complete: function(xhr, status){     
+          }
+        });
+      }
+     })
+     
+}
+
