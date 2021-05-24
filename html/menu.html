@@ -40,7 +40,7 @@
             <a class="nav-link" href="#">Calendario</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Registro de Ventas</a>
+            <a class="nav-link" href="#" ng-click="searchClientNamePC()" data-bs-toggle="modal" data-bs-target="#searchClientModal">Registro de Pedido</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Consulta de información</a>
@@ -58,6 +58,185 @@
         </ul>
       </div>
     </nav>
+
+    <div class="collapse" id="collapseClient" style = "position: absolute; top: 7%; left: 50%; size:20%; ">
+        <div class = "row">
+            <ul style="list-style-type:none; padding-left:0%">
+              <li>
+                <a class="nav-link" href="#" style="font-size: 15px;color: rgb(255, 255, 255);"   data-bs-toggle="modal" data-bs-target="#ModalNewClient" ng-click= "NewClient()" >Nuevo Cliente</a>
+              </li>
+            </ul>
+        </div>
+     </div>
+
+     <div class="modal fade" id="searchClientModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Búsqueda de Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        <div class="modal-body">
+          <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
+            <div class="spinner-border text-dark" role="status">
+              <span class="sr-only"></span>
+            </div>
+          </div>
+          <div class="form-row" ng-if="!showLoadingModal">
+            <div class="autocomplete" style="margin-right:20px;">
+              <input ng-model="findClient" type="text" class="form-control" id="clientInputPC" aria-describedby="emailHelp" style="margin-top: 30px;" placeholder="Buscar Cliente">
+            </div>
+              <button ng-click="searchClientForPC()" class="btn btn-primary" style="margin-top: 10px;" data-bs-toggle="modal" href="#newOrderModal" data-bs-dismiss="modal" data-bs-toggle="#newOrderModal">Buscar</button>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="newOrderModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Nuevo Pedido</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        <div class="modal-body">
+          <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
+            <div class="spinner-border text-dark" role="status">
+              <span class="sr-only"></span>
+            </div>
+          </div>
+          <div ng-if="!showLoadingModal" class="row">
+            <div class="row">
+              <label style="font-style: bold; margin-top: 10px;" for="exampleFormControlInput1">Cliente</label>
+            </div>
+            <div class="row">
+              <div class="col-9">
+                <input type="name"  readonly class="form-control" id="displayClientInput" ng-model="clientName">
+              </div>
+              <div class="col-3">
+                <button class="btn btn-success" ng-click="changeClient()" style="width: 100%;">Cambiar Cliente</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-9">
+                <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Domicilio</label>
+                <input type="name" readonly class="form-control" id="displayClientAddress"   ng-model="clientAddress">
+              </div>
+              <div class="col-3">
+                <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Celular</label>
+                <input type="name" readonly class="form-control" id="displayClientPhone" aria-describedby="emailHelp" ng-model="clientPhone">
+              </div>
+            </div>
+            <div class="row" style="font-style: bold; margin-top: 10px;">
+              <div class="col-3">
+                <label  for="exampleFormControlInput1">Fecha:</label>
+                <input ng-model="startingDate" type="text" id="startingDate" class="form-control datepickerD"/>
+              </div>
+              <div class="col-3">
+                Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
+              </div>
+              <div class="col-3">
+                Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+              </div>
+              <div class="col-3">
+                <label  for="exampleFormControlInput1">Almacen</label>
+                <select ng-change="changeWarehouse(warehouseSelected)"  ng-options="warehouse as warehouse.name for warehouse in warehousesList" class="form-control" ng-model='warehouseSelected'></select>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 30px; margin-bottom: 20px;">
+              <hr>
+             </div>
+            <div class="row">
+              <div class="col-8">
+                <label for="exampleFormControlInput1">Productos:</label>
+                <div class="autocomplete">
+                  <input ng-disabled="warehouseChanged" ng-model="addedProduct" id='autocompleteProducts' type="text" class="form-control" aria-describedby="emailHelp" placeholder="Agrega Produtos">
+               </div>
+             </div>
+             <div class="col-4" style="padding-left: 5%;">
+              <button class="btn btn-warning" style="margin-top: 25px;" ng-click="addProducts()"> + Agregar</button>
+            </div>
+           </div>
+            <div class="row" ng-repeat="product in selectedProducts" style="margin-top: 5%;">
+              <div class="col-5">
+                <input readonly class="form-control" ng-value="product.title">
+              </div>
+              <div class="col-2">
+                <button class="btn btn-light" ng-click="decrease($index)">-</button><span class="count"> {{product.qty}} <button class="btn btn-light" ng-click="increase($index)">+</button>
+              </div>
+              <div class="col-1" style="padding-top: 0.5%; font-size: 20px; font-weight: bold;">
+                ${{product.qty*product.price}}
+              </div>
+              <div class="col-3"  style="padding-left: 5%;">
+                <button class="btn btn-danger" ng-click="delete($index)" style="width: 70%;">Borrar</button>
+              </div>
+            </div>
+            <div>
+              <div class="row" style="margin-top:1%;">
+                <div class="col-6">
+  
+                </div>
+                <div class="col-3" style="padding-right: 8%;">
+                  <hr>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-4">
+  
+                </div>
+                <div class="col-2" style="text-align: right;">
+                  Subtotal:
+                </div>
+                <div class="col-2">
+                  <input ng-model="subtotal" type="text" id="" class="form-control" style="height: 70%; text-align:right" readonly>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-4">
+  
+                </div>
+                <div ng-model="discount" class="col-2" style="text-align: right;" ng-value="0">
+                  <input ng-change="discountActive(discountCheckbox)" ng-model="discountCheckbox" class="form-check-input" type="checkbox"  id="flexCheckChecked"> Descuento:
+                </div>
+                <div class="col-2">
+                  <input ng-model="discount" ng-change="subtractDiscount(discount)" ng-disabled="!disableDiscountInput" type="text" id="discountValue" class="form-control" style="height: 70%; text-align:right">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-4">
+  
+                </div>
+                <div class="col-2" style="text-align: right;">
+                  Total de Venta:
+                </div>
+                <div class="col-2">
+                  <input type="text" ng-model="totalSalePC" class="form-control" ng-value="{{subtotal-discount}}" style="height: 70%; text-align:right" readonly>
+                </div>
+              </div>
+            </div>
+    
+            <div style="height: 100px;" class="row">
+
+            </div>
+           <div class="row" style="margin-bottom: 20px;">
+              <div class="col-2">
+
+              </div>
+             <div class="col-8">
+               <button class="btn btn-primary" style="width: 100%;" ng-click="sendForm()">Enviar</button>
+             </div>
+             <div class="col-3">
+
+             </div>
+          
+            </div>
+          </div>
+
+        </div>
+        </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="ModalNewClient" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">

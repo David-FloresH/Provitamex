@@ -2,37 +2,6 @@ console.log("inicio");
 let newProductID = "";
 let newProductInventory = "";
 let newProductPrice = "";
-// $.ajax({
-//   method: 'POST',
-//   jsonp: 'callback',
-//   url: 'http://localhost:8081/newclient',
-//   contentType: "application/json; charset=utf-8",
-//   dataType: 'json',
-//   data: JSON.stringify({
-//     legalName: "TestUser",
-//     pricelistId: "4cda058c-2d0a-4635-a7b2-597de294afed",
-//     telephone: "6861880576",
-//     streetName: "Cagliari",
-//     exteriorNo: "2267",
-//     colonia: "Bilbao",
-//     zipCode: "21254" ,
-//     city: "Mexicali",
-//     state: "Baja California",
-//     interiorNo: "1"
-//   }),
-//   beforeSend: function(xhr,settings){
-//     //spinner show;
-//   },
-//   success: function(response){
-//     console.log(response);
-//   },
-//   error: function(xhr,status,errorThrown) {
-//     console.log("Error");
-//   },
-//   complete: function(xhr, status){
-//     //spinner hide;
-//   }
-// });
 
 var app = angular.module("myApp", []);
 var scope;
@@ -63,6 +32,10 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.addedProduct = "";
     $scope.clientPhone = "";
     $scope.priceListID = "";
+    $scope.disableDiscountInput = false;
+    $scope.subtotal = 0;
+    $scope.discount = 0;
+    $scope.totalSalePC = 0;
     $scope.clientList = [];
     $scope.warehousesList = [];
     $scope.clientListNames = [];
@@ -127,6 +100,26 @@ app.controller("MainController", ['$scope', function($scope) {
 
        }
     };
+    $scope.searchClientNamePC = function(){
+      document.getElementById("clientInputPC").value = "";
+      $scope.selectedProducts = [];
+      searchClientNameForPC();
+      $scope.showLoadingModal = true;
+    }
+
+
+    
+    $scope.searchClientForPC = function(){
+      $scope.showLoadingModal = true;
+      $scope.indexID = '';
+      $scope.clientName = document.getElementById("clientInputPC").value;
+      $scope.clientList.forEach(function(element,index,arr){
+        if(arr[index].clientName == $scope.clientName){
+          $scope.indexID = arr[index].id;
+        }
+      });
+      getCompletedFormInfoForPC();
+    }
 
     $scope.searchClient = function (){
       $scope.showForm = false;
@@ -134,13 +127,12 @@ app.controller("MainController", ['$scope', function($scope) {
         $scope.showForm = false;
         $scope.showLoading = true;
         $scope.indexID = '';
-        $scope.clientName = document.getElementById("clientInput").value;
+        $scope.clientName = document.getElementById("clientInputPC").value;
         $scope.clientList.forEach(function(element,index,arr){
           if(arr[index].clientName == $scope.clientName){
             $scope.indexID = arr[index].id;
           }
         });
-        $scope.warehousesNames = [];
         getCompletedFormInfo();
     }
     
@@ -153,6 +145,28 @@ app.controller("MainController", ['$scope', function($scope) {
           clientListNames[index] = element.clientName;
         });
         autocomplete(document.getElementById('clientInput'),clientListNames);
+    }
+
+    $scope.discountActive = function(check){
+      $scope.disableDiscountInput = check;
+      if(!check){
+        console.log("a cero");
+        $scope.discount = 0;
+        document.getElementById("discountValue").value = 0;
+        $scope.totalSalePC = $scope.subtotal
+
+      }
+    }
+
+    $scope.subtractDiscount = function(discount){
+      if($scope.subtotal >= discount){
+        $scope.totalSalePC = $scope.subtotal - discount;
+      }
+      else{
+        document.getElementById("discountValue").value = 0;
+        $scope.totalSalePC = $scope.subtotal;
+      }
+      
     }
 
     $scope.addProducts = function(){
@@ -173,6 +187,8 @@ app.controller("MainController", ['$scope', function($scope) {
           price: newProductPrice,
           inventory: newProductInventory
         });
+        $scope.subtotal += parseInt($scope.selectedProducts[0].price);
+        $scope.totalSalePC += parseInt($scope.selectedProducts[0].price);
         document.getElementById("autocompleteProducts").value = "";
         $scope.addedProduct = '';
       }
@@ -188,6 +204,9 @@ app.controller("MainController", ['$scope', function($scope) {
       console.log($scope.selectedProducts[index].inventory);
       if($scope.selectedProducts[index].qty < $scope.selectedProducts[index].inventory){
         $scope.selectedProducts[index].qty += 1;
+        $scope.subtotal += parseInt($scope.selectedProducts[index].price);
+        $scope.totalSalePC += parseInt($scope.selectedProducts[index].price)
+        console.log($scope.subtotal);
       }
     }
 
@@ -197,11 +216,23 @@ app.controller("MainController", ['$scope', function($scope) {
       }
       else{
         $scope.selectedProducts[index].qty -= 1;
+        $scope.subtotal -= parseInt($scope.selectedProducts[index].price);
+        $scope.totalSalePC -= parseInt($scope.selectedProducts[index].price);
+        console.log($scope.subtotal);
       }
     }
 
     $scope.delete = function(index){
+      $scope.subtotal -= parseInt($scope.selectedProducts[index].qty * $scope.selectedProducts[index].price);
+      $scope.totalSalePC -= parseInt($scope.selectedProducts[index].qty * $scope.selectedProducts[index].price);
       $scope.selectedProducts.splice(index,1);
+      if($scope.selectedProducts.length == 0){
+        $scope.disableDiscountInput = false;
+        $scope.subtotal = 0;
+        document.getElementById("flexCheckChecked").checked = false;
+        document.getElementById("discountValue").value = 0;
+        $scope.totalSalePC = 0;
+      }
     }
 
     $scope.sendForm = function(){
@@ -210,19 +241,15 @@ app.controller("MainController", ['$scope', function($scope) {
         $scope.totalSale += (parseFloat(product.qty*product.price));
       })
       $('#staticBackdrop').modal('show');
-      sendNewOrder();
-      console.log("enviar");
     }
 
     $scope.finishOrder = function(){
-      $('#staticBackdrop').modal('hide');
-      document.getElementById("clientInput").value = "";
-      $scope.showCompletedForm = false;
-      $scope.showForm = true;
-      Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
+      sendNewOrder();
     }
 
     $scope.changeWarehouse = function(warehouse){
+      $scope.selectedProducts = [];
+      console.log(warehouse);
       $scope.locationID = warehouse.locationID;
       $scope.warehouseID = warehouse.id;
       console.log(warehouse);
@@ -495,6 +522,74 @@ function getCompletedFormInfo() {
         $('.datepickerD').datepicker({
           dateFormat: 'dd-mm-yy'
         });
+        $('.timepicker').timepicker({
+          timeFormat: 'h:mm p',
+          interval: 60,
+          minTime: '10',
+          maxTime: '6:00pm',
+          defaultTime: '11',
+          startTime: '10:00',
+          dynamic: false,
+          dropdown: true,
+          scrollbar: true
+        });
+      }
+    });
+  
+    $.ajaxSetup({
+      headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+    })
+    $.ajax({
+      method: 'GET',
+      jsonp: 'callback',
+      url: 'http://localhost:8081/warehouses',
+      dataType: 'json',
+      beforeSend: function(xhr,settings){
+        //spinner show;
+      },
+      success: function(response){
+        console.log(response);
+        scope.warehousesList = response;
+      },
+      error: function(xhr,status,errorThrown) {
+        console.log("Error");
+      },
+      complete: function(xhr, status){
+        console.log('complete in');
+        scope.showLoadingModal = false;
+        scope.showCompletedForm = true;
+        scope.showLoading = false;
+        scope.$apply();
+      }
+    });
+  }
+
+  function getCompletedFormInfoForPC() {
+    $.ajaxSetup({
+      headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+    });
+    $.ajax({
+      method: 'GET',
+      jsonp: 'callback',
+      url: 'http://localhost:8081/clients/'+scope.indexID,
+      dataType: 'json',
+      beforeSend: function(xhr,settings){
+        
+      },
+      success: function(response){
+        console.log(response);
+        scope.clientPhone = response.telephones;
+        scope.clientAddress = response.addresses[0];
+        scope.priceListID = response.priceListID;
+        scope.$apply();
+      },
+      error: function(xhr,status,errorThrown) {
+        console.log("Error");
+      },
+      complete: function(xhr, status){
+        $('.datepickerD').datepicker({
+          dateFormat: 'dd-mm-yy'
+        });
         console.log("init");
         $('.timepicker').timepicker({
           timeFormat: 'h:mm p',
@@ -530,13 +625,12 @@ function getCompletedFormInfo() {
       },
       complete: function(xhr, status){
         console.log('complete in');
-        scope.showCompletedForm = true;
+        scope.showLoadingModal = false;
         scope.showLoading = false;
         scope.$apply();
       }
     });
   }
-
 
 function searchClientName(){
   $.ajaxSetup({
@@ -568,6 +662,39 @@ function searchClientName(){
       });
       console.log(clientListNames);     
       autocomplete(document.getElementById('clientInput'),clientListNames);
+    }
+  });
+}
+
+function searchClientNameForPC(){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/clients',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      scope.showLoadingModal = false;
+      scope.clientList = response;
+      console.log(scope.clientList);
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      let clientListNames = [];
+      scope.clientList.forEach(function(element,index){
+        clientListNames[index] = element.clientName;
+      });
+      console.log(clientListNames);     
+      autocomplete(document.getElementById('clientInputPC'),clientListNames);
     }
   });
 }
@@ -608,7 +735,7 @@ function sendNewOrder() {
   let newOrderDate = document.getElementById("startingDate").value + " " + document.getElementById("startingTime").value + " " + document.getElementById("finishingTime").value;
   console.log(newOrderDate);
   scope.selectedProducts.forEach(element => {
-    sentProducts.push({id: element.id,price:element.price,qty:element.qty})
+    sentProducts.push({ID:element.id,Price:element.price,Qty:element.qty})
   });
   let data = {
     addressId: scope.clientAddress,
@@ -626,7 +753,7 @@ function sendNewOrder() {
   $.ajax({
     method: 'POST',
     jsonp: 'callback',
-    url: 'http://localhost:8081/neworder',
+    url: 'http://localhost:8081/order/new',
     contentType: "application/json; charset=utf-8",
     dataType: 'json',
     data: JSON.stringify({
@@ -643,8 +770,16 @@ function sendNewOrder() {
     },
     success: function(response){
       console.log(response);
+      $('#staticBackdrop').modal('hide');
+      document.getElementById("clientInput").value = "";
+      scope.showCompletedForm = false;
+      scope.showForm = true;
+      Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
+      scope.$apply();
     },
     error: function(xhr,status,errorThrown) {
+      $('#staticBackdrop').modal('hide');
+      Swal.fire("Error", "Ha ocurrido un error.", "error");
       console.log("Error");
     },
     complete: function(xhr, status){

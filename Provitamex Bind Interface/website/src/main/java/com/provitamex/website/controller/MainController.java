@@ -1,6 +1,7 @@
 package com.provitamex.website.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.provitamex.website.model.Client;
 import com.provitamex.website.model.ClientDetails;
 import com.provitamex.website.model.Order;
@@ -88,8 +91,11 @@ public class MainController {
 	}
 	
 	@CrossOrigin
-	@PostMapping("/newclient")
-	public String setNewClient(@RequestBody Map<String,String> details) {
+	@PostMapping("/client/{mode}")
+	public String setNewClient(@PathVariable String mode, @RequestBody Map<String,String> details) {
+		if(mode.equals("edit")) {
+			String id= details.get("id");
+		}
 		String legalName = details.get("legalName");
 		String pricelistId = details.get("pricelistId");
 		String telephone = details.get("telephone");
@@ -100,25 +106,35 @@ public class MainController {
 		String city = details.get("city");
 		String state = details.get("state");
 		String interiorNo = details.get("interiorNo");
-		logger.info("NEW CLIENT METHOD CALLED");
-		System.out.println("NEW CLIENT METHOD CALLED");
-		return service.setNewClient(legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
+		if(mode.equals("edit")) {
+			logger.info("EDIT CLIENT METHOD CALLED");
+			System.out.println("EDIT CLIENT METHOD CALLED");
+			String id= details.get("id");
+			return service.setClient(mode,id,legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
+		}
+		else {
+			logger.info("NEW CLIENT METHOD CALLED");
+			System.out.println("NEW CLIENT METHOD CALLED");
+			return service.setClient(mode,"",legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
+		}
 	}
 	
 	@CrossOrigin
-	@PostMapping("/neworder")
+	@PostMapping("/order/{mode}")
 	public String setNewOrder(@RequestBody Map<String,Object> details) {
 		String addressId = String.valueOf(details.get("addressId"));
 		String clientId = String.valueOf(details.get("clientId"));
 		String locationId = String.valueOf(details.get("locationId"));
-		String orderDate = String.valueOf(details.get("orderDate"));
 		String pricelistId = String.valueOf(details.get("pricelistId"));
 		String warehouseId = String.valueOf(details.get("warehouseId"));
 		String products= String.valueOf(details.get("products"));
+		Gson g = new Gson(); 
+        Product2[] productsList = g.fromJson(products, Product2[].class);
+		List<Product2> productsList2 = Arrays.asList(productsList);
 		String comments= String.valueOf(details.get("comments"));
 		logger.info("NEW ORDER METHOD CALLED");
 		System.out.println("NEW ORDER METHOD CALLED");
-		return service.setNewOrder(addressId,clientId,locationId,pricelistId,warehouseId,products,comments);
+		return service.setNewOrder(addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
 	}
 	
 	@CrossOrigin
@@ -127,14 +143,20 @@ public class MainController {
 		String clientId = String.valueOf(details.get("clientId"));
 		String locationId = String.valueOf(details.get("locationId"));
 		String warehouseId = String.valueOf(details.get("warehouseId"));
-		String invoiceDate = String.valueOf(details.get("invoiceDate"));
 		String pricelistId = String.valueOf(details.get("pricelistId"));
 		String products= String.valueOf(details.get("products"));
 		String payments= String.valueOf(details.get("payments"));
 		logger.info("NEW INVOICE METHOD CALLED");
 		System.out.println("NEW INVOICE METHOD CALLED");
-		return service.setNewInvoice(clientId,locationId,warehouseId,invoiceDate,pricelistId,products,payments);
+		return service.setNewInvoice(clientId,locationId,warehouseId,pricelistId,products,payments);
 	}
 	
+	@CrossOrigin
+	@DeleteMapping("/deleteclient/{id}")
+	public String deleteClient(@PathVariable String id) {
+		logger.info("DELETE CLIENT METHOD CALLED");
+		System.out.println("DELETE CLIENT METHOD CALLED");
+		return service.deleteClient(id);
+	}
 	
 }
