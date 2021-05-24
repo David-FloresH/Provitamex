@@ -9,7 +9,8 @@ public class Order {
 	private String ClientID;
 	private String ID;
 	private String OrderDate;
-	private String comments;
+	private String Comments;
+	private String WarehouseID;
 	
 	public String getClientName() {
 		return ClientName;
@@ -54,10 +55,22 @@ public class Order {
 		OrderDate = orderDate;
 	}
 	public String getComments() {
-		return comments;
+		return Comments;
 	}
 	public void setComments(String comments) {
-		this.comments = comments;
+		Comments = comments;
+	}
+	public String getWarehouseID() {
+		return WarehouseID;
+	}
+	public void setWarehouseID(String warehouseID) {
+		WarehouseID = warehouseID;
+	}
+	@Override
+	public String toString() {
+		return "Order [ClientName=" + ClientName + ", PhoneNumber=" + PhoneNumber + ", Status=" + Status
+				+ ", ProductSubtotal=" + ProductSubtotal + ", ClientID=" + ClientID + ", ID=" + ID + ", OrderDate="
+				+ OrderDate + ", Comments=" + Comments + ", WarehouseID=" + WarehouseID + "]";
 	}
 	
 }

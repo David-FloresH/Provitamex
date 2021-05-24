@@ -5,8 +5,11 @@ public class Product2 {
 	private String Title;
 	private String Price;
 	private String Inventory;
+	private String Balance;
 	private String Qty;
 	private String ID;
+	private String ProductID;
+	
 	public String getTitle() {
 		return Title;
 	}
@@ -43,10 +46,23 @@ public class Product2 {
 	public void setQty(String qty) {
 		Qty = qty;
 	}
+	public String getBalance() {
+		return Balance;
+	}
+	public void setBalance(String balance) {
+		Balance = balance;
+	}
+	public String getProductID() {
+		return ProductID;
+	}
+	public void setProductID(String productID) {
+		ProductID = productID;
+	}
 	@Override
 	public String toString() {
 		return "Product2 [Name=" + Name + ", Title=" + Title + ", Price=" + Price + ", Inventory=" + Inventory
-				+ ", Qty=" + Qty + ", ID=" + ID + "]";
+				+ ", Balance=" + Balance + ", Qty=" + Qty + ", ID=" + ID + ", ProductID=" + ProductID + "]";
 	}
+	
 	
 }
