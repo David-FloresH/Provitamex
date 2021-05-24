@@ -21,6 +21,7 @@ import com.provitamex.website.model.Order;
 import com.provitamex.website.model.OrderDetails;
 import com.provitamex.website.model.OrderList;
 import com.provitamex.website.model.Product2;
+import com.provitamex.website.model.ProductList;
 import com.provitamex.website.model.Warehouse;
 import com.provitamex.website.model.WarehouseList;
 
@@ -52,15 +53,36 @@ public class MainService {
 	public List<Product2> getProductsInWarehouse(String warehouseId, String pricelistId){
 		Product2[] products;
 		List<Product2> productsList= new ArrayList<>();
+		ProductList prods;
+		List<Product2> tempProductsList= new ArrayList<>();
 		String entity= "";
+		String entity2= "";
         try {
-            entity= apiservice.getRequest("https://api.bind.com.mx//api/ProductsPriceAndInventory?warehouseId="+warehouseId+"&priceListId="+pricelistId);
-            System.out.println(entity);
+            entity= apiservice.getRequest("https://api.bind.com.mx/api/ProductsPriceAndInventory?warehouseId="+warehouseId+"&priceListId="+pricelistId);
+            entity2= apiservice.getRequest("https://api.bind.com.mx/api/Inventory?warehouseID="+warehouseId);
             Gson g = new Gson(); 
             products = g.fromJson(entity, Product2[].class);
             productsList= Arrays.asList(products);
             Stream<Product2> stream= productsList.stream().filter(p -> Double.parseDouble(p.getInventory()) > 0.000000);
             productsList= stream.collect(Collectors.toList());
+            Gson g2 = new Gson(); 
+            prods= g2.fromJson(entity2, ProductList.class);
+            tempProductsList= prods.getValue();
+            logger.info("Lista con precios: "+productsList.size()+" Lista con disponibilidad: "+tempProductsList.size());
+            for(Product2 p2: productsList) {
+            	Product2 tempProduct= null;
+            	try {
+            		tempProduct= tempProductsList.stream().filter(p -> p.getProductID().equals(p2.getID())).findFirst().get();
+            	}catch(Exception e) {
+            		
+            	}
+            	if(tempProduct==null) {
+            		p2.setBalance("0.000000");
+            	}
+            	else {
+            		p2.setBalance(tempProduct.getBalance());
+            	}
+            }
         }
         catch (Exception e)
         {
@@ -130,12 +152,25 @@ public class MainService {
 		return clientDetails;
 	}
 	
-	public String setNewClient(String legalName,String pricelistId,String telephone,String streetName,String exteriorNo,String colonia,String zipCode,String city,String state, String interiorNo) {
-		String clientinfo= "{\"LegalName\": \""+legalName+"\", \"CommercialName\": \""+legalName+"\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \""+pricelistId+"\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\""+telephone+"\",\"Address\":{\"Streetname\": \""+streetName +"\", \"ExteriorNumber\": \""+exteriorNo+"\", \"Colonia\": \""+colonia+"\", \"ZipCode\":\""+zipCode+"\", \"City\": \""+city+"\", \"State\": \""+state+"\", \"InteriorNumber\": \""+interiorNo+"\"}}";
+	public String setClient(String mode, String id,String legalName,String pricelistId,String telephone,String streetName,String exteriorNo,
+			String colonia,String zipCode,String city,String state, String interiorNo) {
+		String clientinfo;
+		if(mode.equals("edit")) {
+			clientinfo= "{ \"ID\": \""+id+"\", \"LegalName\": \""+legalName+"\", \"CommercialName\": \""+legalName+"\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \""+pricelistId+"\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\""+telephone+"\",\"Address\":{\"Streetname\": \""+streetName +"\", \"ExteriorNumber\": \""+exteriorNo+"\", \"Colonia\": \""+colonia+"\", \"ZipCode\":\""+zipCode+"\", \"City\": \""+city+"\", \"State\": \""+state+"\", \"InteriorNumber\": \""+interiorNo+"\"}}";
+		}
+		else  {
+			clientinfo= "{\"LegalName\": \""+legalName+"\", \"CommercialName\": \""+legalName+"\", \"RFC\": \"XAXX010101000\", \"CreditDays\": \"0\", \"CreditAmount\": \"0\", \"PriceListID\": \""+pricelistId+"\", \"AccountingNumber\": \"105-01-001\" ,\"Telephone\":\""+telephone+"\",\"Address\":{\"Streetname\": \""+streetName +"\", \"ExteriorNumber\": \""+exteriorNo+"\", \"Colonia\": \""+colonia+"\", \"ZipCode\":\""+zipCode+"\", \"City\": \""+city+"\", \"State\": \""+state+"\", \"InteriorNumber\": \""+interiorNo+"\"}}";
+		}
 		String clientId= "";
 		try {
 			System.out.println(clientinfo);
-            clientId= apiservice.postRequest("https://api.bind.com.mx/api/Clients",clientinfo);
+			if(mode.equals("edit")) {
+	            apiservice.putRequest("https://api.bind.com.mx/api/Clients",clientinfo);
+			}
+			else {
+	            clientId= apiservice.postRequest("https://api.bind.com.mx/api/Clients",clientinfo);
+
+			}
         }
         catch (Exception e)
         {
@@ -194,4 +229,18 @@ public class MainService {
         }
 		return invoiceId;
 	}
+	
+	public String deleteClient(String id) {
+		String result;
+		try {
+			apiservice.deleteRequest("https://api.bind.com.mx/api/Clients/"+id);
+			result="Success";
+		} catch(Exception e) {
+			logger.error("An error occured while deleting client. Full stack trace: ",e);
+			e.printStackTrace();
+			result="Error";
+		}
+		return result;
+	}
+	
 }

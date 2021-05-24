@@ -1,6 +1,5 @@
 package com.provitamex.website.controller;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -11,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +24,6 @@ import com.provitamex.website.model.Order;
 import com.provitamex.website.model.OrderDetails;
 import com.provitamex.website.model.Product2;
 import com.provitamex.website.model.Warehouse;
-import com.provitamex.website.model.WarehouseList;
 import com.provitamex.website.service.MainService;
 
 @RestController
@@ -92,8 +91,11 @@ public class MainController {
 	}
 	
 	@CrossOrigin
-	@PostMapping("/newclient")
-	public String setNewClient(@RequestBody Map<String,String> details) {
+	@PostMapping("/client/{mode}")
+	public String setNewClient(@PathVariable String mode, @RequestBody Map<String,String> details) {
+		if(mode.equals("edit")) {
+			String id= details.get("id");
+		}
 		String legalName = details.get("legalName");
 		String pricelistId = details.get("pricelistId");
 		String telephone = details.get("telephone");
@@ -104,25 +106,21 @@ public class MainController {
 		String city = details.get("city");
 		String state = details.get("state");
 		String interiorNo = details.get("interiorNo");
-		logger.info("NEW CLIENT METHOD CALLED");
-		System.out.println("NEW CLIENT METHOD CALLED");
-		return service.setNewClient(legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
-	} /*
-	{
-		"addressId":"89f97ac9-8952-411f-9b21-300b5357c3b3",
-		"clientId":"8e1ed991-2231-4617-ab1c-571287483305",
-		"locationId":"bb2f2d8f-4e26-48ec-a562-eb12671de881",
-		"pricelistId":"4cda058c-2d0a-4635-a7b2-597de294afed",
-		"warehouseId":"410fb6eb-539b-4554-b5bf-ddb043b33c57",
-		"products":[
-		      {"id":"1589becc-5c46-4fbf-bbee-12d9b7045d18","price":"270.00","qty":1},
-		      {"id":"5116d09d-80be-4525-b688-3f0b1505b150","price":"97.22","qty":1},
-		      {"id":"c9818525-7b2c-483b-9a25-466016a22285","price":"240.74","qty":3}
-		      	  ],
-		"comments":"01-05-2021 11:00 AM 11:00 AM"
-		}*/
+		if(mode.equals("edit")) {
+			logger.info("EDIT CLIENT METHOD CALLED");
+			System.out.println("EDIT CLIENT METHOD CALLED");
+			String id= details.get("id");
+			return service.setClient(mode,id,legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
+		}
+		else {
+			logger.info("NEW CLIENT METHOD CALLED");
+			System.out.println("NEW CLIENT METHOD CALLED");
+			return service.setClient(mode,"",legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
+		}
+	}
+	
 	@CrossOrigin
-	@PostMapping("/neworder")
+	@PostMapping("/order/{mode}")
 	public String setNewOrder(@RequestBody Map<String,Object> details) {
 		String addressId = String.valueOf(details.get("addressId"));
 		String clientId = String.valueOf(details.get("clientId"));
@@ -153,5 +151,12 @@ public class MainController {
 		return service.setNewInvoice(clientId,locationId,warehouseId,pricelistId,products,payments);
 	}
 	
+	@CrossOrigin
+	@DeleteMapping("/deleteclient/{id}")
+	public String deleteClient(@PathVariable String id) {
+		logger.info("DELETE CLIENT METHOD CALLED");
+		System.out.println("DELETE CLIENT METHOD CALLED");
+		return service.deleteClient(id);
+	}
 	
 }
