@@ -1,8 +1,6 @@
 package com.provitamex.website.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -34,15 +32,6 @@ public class MainController {
 	MainService service;
 	
 	@CrossOrigin
-	@GetMapping("/test")
-	public void testMethod(){
-		Date date= new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
-		String strDate= formatter.format(date);
-		System.out.println(strDate);
-	}
-	
-	@CrossOrigin
 	@GetMapping("/warehouses")
 	public List<Warehouse> getWarehouses(){
 		logger.info("WAREHOUSE METHOD CALLED");
@@ -52,10 +41,13 @@ public class MainController {
 
 	@CrossOrigin
 	@GetMapping("/orders")
-	public List<Order> getOrders(){
+	public List<Order> getOrders(@RequestBody Map<String,String> details){
+		String status= details.get("status");
+		String orderDate= details.get("orderDate");
+		String warehouseId= details.get("warehouseId");
 		logger.info("ORDERS METHOD CALLED");
 		System.out.println("ORDERS METHOD CALLED");
-		return service.getOrders();
+		return service.getOrders(status,orderDate,warehouseId);
 	}
 	
 	@CrossOrigin
@@ -93,9 +85,6 @@ public class MainController {
 	@CrossOrigin
 	@PostMapping("/client/{mode}")
 	public String setNewClient(@PathVariable String mode, @RequestBody Map<String,String> details) {
-		if(mode.equals("edit")) {
-			String id= details.get("id");
-		}
 		String legalName = details.get("legalName");
 		String pricelistId = details.get("pricelistId");
 		String telephone = details.get("telephone");
@@ -121,7 +110,7 @@ public class MainController {
 	
 	@CrossOrigin
 	@PostMapping("/order/{mode}")
-	public String setNewOrder(@RequestBody Map<String,Object> details) {
+	public String setNewOrder(@PathVariable String mode, @RequestBody Map<String,Object> details) {
 		String addressId = String.valueOf(details.get("addressId"));
 		String clientId = String.valueOf(details.get("clientId"));
 		String locationId = String.valueOf(details.get("locationId"));
@@ -132,9 +121,17 @@ public class MainController {
         Product2[] productsList = g.fromJson(products, Product2[].class);
 		List<Product2> productsList2 = Arrays.asList(productsList);
 		String comments= String.valueOf(details.get("comments"));
-		logger.info("NEW ORDER METHOD CALLED");
-		System.out.println("NEW ORDER METHOD CALLED");
-		return service.setNewOrder(addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
+		if(mode.equals("edit")) {
+			logger.info("EDIT ORDER METHOD CALLED");
+			System.out.println("EDIT ORDER METHOD CALLED");
+			String id= String.valueOf(details.get("id"));
+			return service.setOrder(mode,id,addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
+		}
+		else {
+			logger.info("NEW ORDER METHOD CALLED");
+			System.out.println("NEW ORDER METHOD CALLED");
+			return service.setOrder(mode,"",addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
+		}
 	}
 	
 	@CrossOrigin
@@ -157,6 +154,14 @@ public class MainController {
 		logger.info("DELETE CLIENT METHOD CALLED");
 		System.out.println("DELETE CLIENT METHOD CALLED");
 		return service.deleteClient(id);
+	}
+	
+	@CrossOrigin
+	@DeleteMapping("/deleteorder/{id}")
+	public String deleteOrder(@PathVariable String id) {
+		logger.info("DELETE ORDER METHOD CALLED");
+		System.out.println("DELETE ORDER METHOD CALLED");
+		return service.deleteOrder(id);
 	}
 	
 }

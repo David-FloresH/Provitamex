@@ -5,6 +5,7 @@ public class ClientDetails {
 	private String Telephones;
 	private String PriceListID;
 	private String[] Addresses;
+	private String Comments;
 	
 	public String getCommercialName() {
 		return CommercialName;
@@ -29,6 +30,12 @@ public class ClientDetails {
 	}
 	public void setPriceListID(String priceListID) {
 		PriceListID = priceListID;
+	}
+	public String getComments() {
+		return Comments;
+	}
+	public void setComments(String comments) {
+		Comments = comments;
 	}
 	
 	
