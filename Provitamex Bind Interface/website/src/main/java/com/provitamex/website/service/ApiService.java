@@ -68,7 +68,6 @@ public class ApiService {
 	
 	public void putRequest(String url,String body) {
 		HttpClient httpclient = HttpClients.createDefault();
-		String entity = "";
         try
         {
             URIBuilder builder = new URIBuilder(url);
@@ -80,7 +79,7 @@ public class ApiService {
 			request.setHeader("Cache-Control", "no-cache");
 			request.setHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthcmVuMXw3MjE4MSIsIkludGVybmFsSUQiOiI1Njc0OWE5Yy04ZTdjLTQ4YTktYjkxYS0wMjkyN2U3MGY4MDIiLCJuYmYiOjE2MTkzOTc2ODUsImV4cCI6MTY1MDkzMzY4NSwiaWF0IjoxNjE5Mzk3Njg1LCJpc3MiOiJNaW5udF9Tb2x1dGlvbnNfU0FfREVfQ1YiLCJhdWQiOiJCaW5kX0VSUF9BUElfVXNlcnMifQ.wjhxCvaXIv6A0Y2ook8dPdGF7WOHqf-i_vzoDJPTxQg");
 			request.setHeader("Content-Type", "application/json");
-			HttpResponse response = httpclient.execute(request);
+			httpclient.execute(request);
         } catch(Exception e) {
         	logger.error("Error on PUT Request. Full stack trace:",e);
         	e.printStackTrace();
@@ -88,19 +87,16 @@ public class ApiService {
 	}
 	
 	
-	public void deleteRequest(String url) {
+	public void deleteRequest(String mode,String id) {
 		HttpClient httpclient = HttpClients.createDefault();
-		String entity = "";
         try
         {
-            URIBuilder builder = new URIBuilder(url);
-
+            URIBuilder builder = new URIBuilder("https://api.bind.com.mx/api/"+mode+"/"+id);
 			URI uri = builder.build();
 			HttpDelete request = new HttpDelete(uri);
 			request.setHeader("Cache-Control", "no-cache");
 			request.setHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImthcmVuMXw3MjE4MSIsIkludGVybmFsSUQiOiI1Njc0OWE5Yy04ZTdjLTQ4YTktYjkxYS0wMjkyN2U3MGY4MDIiLCJuYmYiOjE2MTkzOTc2ODUsImV4cCI6MTY1MDkzMzY4NSwiaWF0IjoxNjE5Mzk3Njg1LCJpc3MiOiJNaW5udF9Tb2x1dGlvbnNfU0FfREVfQ1YiLCJhdWQiOiJCaW5kX0VSUF9BUElfVXNlcnMifQ.wjhxCvaXIv6A0Y2ook8dPdGF7WOHqf-i_vzoDJPTxQg");
-			
-			HttpResponse response = httpclient.execute(request);
+			httpclient.execute(request);
         } catch(Exception e) {
         	logger.error("Error on DELETE Request. Full stack trace:",e);
         	e.printStackTrace();
