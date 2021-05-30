@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+import com.provitamex.website.model.Account;
 import com.provitamex.website.model.Client;
 import com.provitamex.website.model.ClientDetails;
+import com.provitamex.website.model.Invoice;
+import com.provitamex.website.model.InvoiceDetails;
 import com.provitamex.website.model.Order;
 import com.provitamex.website.model.OrderDetails;
+import com.provitamex.website.model.Payment;
 import com.provitamex.website.model.Product2;
 import com.provitamex.website.model.Warehouse;
 import com.provitamex.website.service.MainService;
@@ -31,23 +35,14 @@ public class MainController {
 	@Autowired
 	MainService service;
 	
+				////////////////////////////          WAREHOUSES METHODS              ///////////////////////////////////////
+	
 	@CrossOrigin
 	@GetMapping("/warehouses")
 	public List<Warehouse> getWarehouses(){
 		logger.info("WAREHOUSE METHOD CALLED");
 		System.out.println("WAREHOUSE METHOD CALLED");
 		return service.getWarehouses();
-	}
-
-	@CrossOrigin
-	@GetMapping("/orders")
-	public List<Order> getOrders(@RequestBody Map<String,String> details){
-		String status= details.get("status");
-		String orderDate= details.get("orderDate");
-		String warehouseId= details.get("warehouseId");
-		logger.info("ORDERS METHOD CALLED");
-		System.out.println("ORDERS METHOD CALLED");
-		return service.getOrders(status,orderDate,warehouseId);
 	}
 	
 	@CrossOrigin
@@ -58,13 +53,7 @@ public class MainController {
 		return service.getProductsInWarehouse(warehouseId,pricelistId);
 	}
 	
-	@CrossOrigin
-	@GetMapping("/orders/{id}")
-	public OrderDetails getOrderDetails(@PathVariable String id){
-		logger.info("ORDER DETAILS METHOD CALLED");
-		System.out.println("ORDER DETAILS METHOD CALLED");
-		return service.getOrderDetails(id);
-	}
+			////////////////////////////         CLIENTS METHODS              ///////////////////////////////////////
 	
 	@CrossOrigin
 	@GetMapping("/clients")
@@ -95,17 +84,36 @@ public class MainController {
 		String city = details.get("city");
 		String state = details.get("state");
 		String interiorNo = details.get("interiorNo");
+		logger.info(mode+" client method called");
+		System.out.println(mode+" client method called");
 		if(mode.equals("edit")) {
-			logger.info("EDIT CLIENT METHOD CALLED");
-			System.out.println("EDIT CLIENT METHOD CALLED");
 			String id= details.get("id");
 			return service.setClient(mode,id,legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
 		}
 		else {
-			logger.info("NEW CLIENT METHOD CALLED");
-			System.out.println("NEW CLIENT METHOD CALLED");
 			return service.setClient(mode,"",legalName,pricelistId,telephone,streetName,exteriorNo,colonia,zipCode,city,state,interiorNo);
 		}
+	}
+
+				////////////////////////////          ORDERS METHODS              ///////////////////////////////////////
+
+	@CrossOrigin
+	@GetMapping("/orders")
+	public List<Order> getOrders(@RequestBody Map<String,String> details){
+		String status= details.get("status");
+		String orderDate= details.get("orderDate");
+		String warehouseId= details.get("warehouseId");
+		logger.info("Orders method called");
+		System.out.println("Orders method called");
+		return service.getOrders(status,orderDate,warehouseId);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/orders/{id}")
+	public OrderDetails getOrderDetails(@PathVariable String id){
+		logger.info("Order details method called");
+		System.out.println("Order details method called");
+		return service.getOrderDetails(id);
 	}
 	
 	@CrossOrigin
@@ -116,22 +124,43 @@ public class MainController {
 		String locationId = String.valueOf(details.get("locationId"));
 		String pricelistId = String.valueOf(details.get("pricelistId"));
 		String warehouseId = String.valueOf(details.get("warehouseId"));
+		String orderDate=  String.valueOf(details.get("orderDate"));
+		String discountAmount = String.valueOf(details.get("discountAmount"));
 		String products= String.valueOf(details.get("products"));
 		Gson g = new Gson(); 
         Product2[] productsList = g.fromJson(products, Product2[].class);
 		List<Product2> productsList2 = Arrays.asList(productsList);
 		String comments= String.valueOf(details.get("comments"));
+		logger.info(mode+" order method called");
+		System.out.println(mode+" order method called");
 		if(mode.equals("edit")) {
-			logger.info("EDIT ORDER METHOD CALLED");
-			System.out.println("EDIT ORDER METHOD CALLED");
 			String id= String.valueOf(details.get("id"));
-			return service.setOrder(mode,id,addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
+			return service.setOrder(mode,id,addressId,clientId,locationId,pricelistId,warehouseId,orderDate,discountAmount,productsList2,comments);
 		}
 		else {
-			logger.info("NEW ORDER METHOD CALLED");
-			System.out.println("NEW ORDER METHOD CALLED");
-			return service.setOrder(mode,"",addressId,clientId,locationId,pricelistId,warehouseId,productsList2,comments);
+			return service.setOrder(mode,"",addressId,clientId,locationId,pricelistId,warehouseId,orderDate,discountAmount,productsList2,comments);
 		}
+	}
+	
+				////////////////////////////         INVOICE METHODS              ///////////////////////////////////////
+	
+	@CrossOrigin
+	@GetMapping("/invoices")
+	public List<Invoice> getInvoices(@RequestBody Map<String,String> details){
+		String status= details.get("status");
+		String invoiceDate= details.get("invoiceDate");
+		String warehouseId= details.get("warehouseId");
+		logger.info("INVOICES method called");
+		System.out.println("INVOICES method called");
+		return service.getInvoices(status,invoiceDate,warehouseId);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/invoices/{id}")
+	public InvoiceDetails getInvoiceDetails(@PathVariable String id){
+		logger.info("INVOICE DETAILS method called");
+		System.out.println("INVOICE DETAILS method called");
+		return service.getInvoiceDetails(id);
 	}
 	
 	@CrossOrigin
@@ -141,27 +170,36 @@ public class MainController {
 		String locationId = String.valueOf(details.get("locationId"));
 		String warehouseId = String.valueOf(details.get("warehouseId"));
 		String pricelistId = String.valueOf(details.get("pricelistId"));
+		String discountAmount = String.valueOf(details.get("discountAmount"));
 		String products= String.valueOf(details.get("products"));
+		Gson g = new Gson(); 
+        Product2[] productsList = g.fromJson(products, Product2[].class);
+		List<Product2> productsList2 = Arrays.asList(productsList);
 		String payments= String.valueOf(details.get("payments"));
-		logger.info("NEW INVOICE METHOD CALLED");
-		System.out.println("NEW INVOICE METHOD CALLED");
-		return service.setNewInvoice(clientId,locationId,warehouseId,pricelistId,products,payments);
+		Gson g2 = new Gson(); 
+        Payment[] paymentsList = g2.fromJson(payments, Payment[].class);
+		List<Payment> paymentsList2 = Arrays.asList(paymentsList);
+		logger.info("NEW INVOICE method called");
+		System.out.println("NEW INVOICE method called");
+		return service.setNewInvoice(clientId,locationId,warehouseId,pricelistId,discountAmount,productsList2,paymentsList2);
+	}
+	
+			////////////////////////////         COMMON METHODS              ///////////////////////////////////////
+
+	
+	@CrossOrigin
+	@DeleteMapping("/delete/{type}/{id}")
+	public String deleteObject(@PathVariable String type,@PathVariable String id) {
+		logger.info("Delete "+type+" method called");
+		System.out.println("DELETE "+type+" method called");
+		return service.deleteObject(type,id);
 	}
 	
 	@CrossOrigin
-	@DeleteMapping("/deleteclient/{id}")
-	public String deleteClient(@PathVariable String id) {
-		logger.info("DELETE CLIENT METHOD CALLED");
-		System.out.println("DELETE CLIENT METHOD CALLED");
-		return service.deleteClient(id);
+	@GetMapping("/accounts")
+	public List<Account> getBankAccounts(){
+		logger.info("BANK ACCOUNTS method called");
+		System.out.println("BANK ACCOUNTS method called");
+		return service.getBankAccounts();
 	}
-	
-	@CrossOrigin
-	@DeleteMapping("/deleteorder/{id}")
-	public String deleteOrder(@PathVariable String id) {
-		logger.info("DELETE ORDER METHOD CALLED");
-		System.out.println("DELETE ORDER METHOD CALLED");
-		return service.deleteOrder(id);
-	}
-	
 }

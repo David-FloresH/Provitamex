@@ -14,6 +14,8 @@ public class OrderDetails {
 	private String EmployeeName;
 	private String Status;
 	private String Total;
+	private String ProductSubtotal;
+	private String Discount;
 	private List<Product2> Products;
 	
 	public String getID() {
@@ -88,4 +90,17 @@ public class OrderDetails {
 	public void setProducts(List<Product2> products) {
 		Products = products;
 	}
+	public String getProductSubtotal() {
+		return ProductSubtotal;
+	}
+	public void setProductSubtotal(String productSubtotal) {
+		ProductSubtotal = productSubtotal;
+	}
+	public String getDiscount() {
+		return Discount;
+	}
+	public void setDiscount(String discount) {
+		Discount = discount;
+	}
+	
 }
