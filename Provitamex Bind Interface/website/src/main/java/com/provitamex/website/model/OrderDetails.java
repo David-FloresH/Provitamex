@@ -16,7 +16,10 @@ public class OrderDetails {
 	private String Total;
 	private String ProductSubtotal;
 	private String Discount;
+	private String WarehouseID;
+	private String LocationID;
 	private List<Product2> Products;
+	private List<Product2> Services;
 	
 	public String getID() {
 		return ID;
@@ -101,6 +104,24 @@ public class OrderDetails {
 	}
 	public void setDiscount(String discount) {
 		Discount = discount;
+	}
+	public String getWarehouseID() {
+		return WarehouseID;
+	}
+	public void setWarehouseID(String warehouseID) {
+		WarehouseID = warehouseID;
+	}
+	public String getLocationID() {
+		return LocationID;
+	}
+	public void setLocationID(String locationID) {
+		LocationID = locationID;
+	}
+	public List<Product2> getServices() {
+		return Services;
+	}
+	public void setServices(List<Product2> services) {
+		Services = services;
 	}
 	
 }

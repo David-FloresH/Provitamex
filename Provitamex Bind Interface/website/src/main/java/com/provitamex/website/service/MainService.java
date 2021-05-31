@@ -290,13 +290,18 @@ public class MainService {
 	 * Params: Mode - new/edit , all the order details to be created/edited.
 	 * Returns: OrderId if it is a new order or a success message if it is an edit.
 	 */
-	public String setOrder(String mode, String id,String addressId,String clientId,String locationId,String pricelistId,String warehouseId,String orderDate ,String discountAmount,List<Product2> products,String comments) {
+	public String setOrder(String mode, String id,String addressId,String clientId,String locationId,String pricelistId,String warehouseId,String orderDate ,String discountAmount,List<Product2> products,List<Product2> services,String comments) {
 		String productList="";
+		String serviceList="";
 		for(Product2 p: products){
-			productList= productList + "{\"ID\": \""+p.getID()+"\", \"Price\": \""+p.getPrice()+"\", \"Qty\": \""+p.getQty()+"\", \"Unit\": \"pieza\"}, ";
+			productList= productList + "{\"ID\": \""+p.getID()+"\", \"Price\": \""+p.getPrice()+"\", \"Qty\": \""+p.getQty()+"\", \"Unit\": \"pieza\"},";
 		}
+		for(Product2 p: services){
+			serviceList= serviceList + "{\"ID\": \""+p.getID()+"\", \"Title\": \""+p.getTitle()+"\", \"Price\": \""+p.getPrice()+"\", \"Qty\": \""+p.getQty()+"\", \"Unit\": \"pieza\"},";
+		}
+		serviceList= serviceList.substring(0,serviceList.length()-1);
 		productList= productList.substring(0,productList.length()-1);
-		String orderinfo= "{\"AddressID\": \""+addressId+"\", \"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" , \"DiscountAmount\": \""+discountAmount+"\" , \"Products\":["+productList+"],\"Comments\": \""+comments+"\"}";
+		String orderinfo= "{\"AddressID\": \""+addressId+"\", \"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"LocationID\": \""+locationId+"\", \"OrderDate\": \""+orderDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" , \"DiscountAmount\": \""+discountAmount+"\" , \"Products\":["+productList+"], \"Services\":["+serviceList+"], \"Comments\": \""+comments+"\"}";
 		String orderId= "";
 		try {
 			logger.info(orderinfo);
