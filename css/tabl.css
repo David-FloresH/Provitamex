@@ -1,16 +1,11 @@
-/*table, th , td  {
-    border-collapse: collapse;
-    padding: 5px;
-    width:;
-  }
-  
+
   table tr:nth-child(odd) {
     background-color: #f1f1f1;
   }
   
   table tr:nth-child(even) {
     background-color: #ffffff;
-  }*/
+  }
 
   .clientListTable{
     color: black;

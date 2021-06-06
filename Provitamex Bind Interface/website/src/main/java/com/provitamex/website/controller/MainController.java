@@ -130,15 +130,21 @@ public class MainController {
 		Gson g = new Gson(); 
         Product2[] productsList = g.fromJson(products, Product2[].class);
 		List<Product2> productsList2 = Arrays.asList(productsList);
+		String services= String.valueOf(details.get("services"));
+		System.out.println(services);
+		System.out.println(products);
+		Gson g2= new Gson();
+		Product2[] servicesList= g2.fromJson(services, Product2[].class);
+		List<Product2> servicesList2 = Arrays.asList(servicesList);
 		String comments= String.valueOf(details.get("comments"));
 		logger.info(mode+" order method called");
 		System.out.println(mode+" order method called");
 		if(mode.equals("edit")) {
 			String id= String.valueOf(details.get("id"));
-			return service.setOrder(mode,id,addressId,clientId,locationId,pricelistId,warehouseId,orderDate,discountAmount,productsList2,comments);
+			return service.setOrder(mode,id,addressId,clientId,locationId,pricelistId,warehouseId,orderDate,discountAmount,productsList2,servicesList2,comments);
 		}
 		else {
-			return service.setOrder(mode,"",addressId,clientId,locationId,pricelistId,warehouseId,orderDate,discountAmount,productsList2,comments);
+			return service.setOrder(mode,"",addressId,clientId,locationId,pricelistId,warehouseId,orderDate,discountAmount,productsList2,servicesList2,comments);
 		}
 	}
 	
