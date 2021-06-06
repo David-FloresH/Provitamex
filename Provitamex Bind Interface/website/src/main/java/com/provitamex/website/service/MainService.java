@@ -411,17 +411,18 @@ public class MainService {
 	 */
 	public String setNewInvoice(String clientId,String locationId,String warehouseId, String pricelistId,String discountAmount,List<Product2> products,List<Payment> payments) {
 		Date date= new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
+		//SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd yyyy HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		String invoiceDate= formatter.format(date);
 		String invoiceId= "";
 		String productList="";
 		for(Product2 p: products){
-			productList= productList + "{\"ID\": \""+p.getID()+"\", \"Price\": \""+p.getPrice()+"\", \"Qty\": \""+p.getQty()+"\", \"Unit\": \"pieza\"}, ";
+			productList= productList + "{\"ID\": \""+p.getID()+"\", \"Price\": \""+p.getPrice()+"\", \"Qty\": \""+p.getQty()+"\", \"Unit\": \"pieza\"},";
 		}
 		productList= productList.substring(0,productList.length()-1);
 		String paymentList="";
 		for(Payment p: payments) {
-			paymentList= paymentList + "{\"PaymentMethod\": \""+p.getPaymentMethod()+"\", \"AccountID\": \""+p.getAccountID()+"\", \"Amount\": \""+p.getAmount()+"\", \"Reference\": \"PAGO CLIENTE\"}, ";
+			paymentList= paymentList + "{\"PaymentMethod\": \""+p.getPaymentMethod()+"\", \"AccountID\": \""+p.getAccountID()+"\", \"Amount\": \""+p.getAmount()+"\", \"Reference\": \"PAGO CLIENTE\"},";
 		}
 		paymentList= paymentList.substring(0,paymentList.length()-1);
 		String invoiceinfo= "{\"ClientID\": \""+clientId+"\", \"CurrencyID\": \"b7e2c065-bd52-40ca-b508-3accdd538860\", \"CFDIUse\": \"3\", \"LocationID\": \""+locationId+"\", \"InvoiceDate\": \""+invoiceDate+"\", \"PriceListID\": \""+pricelistId+"\", \"WarehouseID\": \""+warehouseId+"\" ,\"Products\":["+productList+"], \"Payments\":["+paymentList+"]}";
