@@ -58,6 +58,70 @@
       </div>
     </nav>
 
+    <div ng-show="showCalendar">
+      <div class="row" style="margin-top: 1rem; margin-left: 1%;">
+        <div class="row">
+          <div class="col-5">
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-9" style="margin-left: 12%;">
+            <label style="font-weight: bold;font-size: 20px;" for="">Ordenes del día: {{pickedDate | date: "dd/MM/yyyy"}}</label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <hr>
+      </div>
+      <div class="row" style="margin-top: 1rem; margin-left: 1%;">
+        <div class="row" style="margin-top: 5%;">
+          <div class="col-5">
+            <label style="font-size: 15px;" for="">Selecciona Fecha:</label>
+          </div>
+          <div class="col-4">
+            <label style="font-size: 15px;" for="">Status:</label>
+          </div>
+          <div class="col-3">
+            <label style="font-size: 15px;" for="">Almacen:</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-5">
+            <input ng-model="pickedDate" class="form-control" type="date" style="margin-left: 0px;" ng-change="dateChanged()">
+          </div>
+          <div class="col-4">
+            <select  class="form-control" name="" id="" ng-change="changeOrdersStatus()" ng-model="activeOrClosed">
+              <option selected>Activo</option>
+              <option>Cerrado</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <select  class="form-control" ng-model="calendarWarehouse" ng-options="warehouse as warehouse.name for warehouse in calendarWarehousesList" ng-change="changeOrders()"></select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row" ng-repeat="order in currentOrders">
+            <div class="col-1">
+            </div>
+            <div class="col-12" style="margin-left: 4%; margin-top: 5%;">
+              <button ng-class="whichButtonIsIt(order)" style="width: 100%; height: 100%; border-radius: 30px;">
+                <div class="row">
+                  <span class="badge badge-primary" style="width: auto; font-size: 13px;">{{order.name}}</span>
+                </div>
+                <div class="row">
+                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.address}}</span>
+                </div>
+                <div class="row">
+                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.scheduled}}</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="collapse" id="collapseClient" style = "position: absolute; top: 7%; left: 50%; size:20%; ">
         <div class = "row">
             <ul style="list-style-type:none; padding-left:0%">
@@ -130,13 +194,13 @@
             <div class="row" style="font-style: bold; margin-top: 10px;">
               <div class="col-3">
                 <label  for="exampleFormControlInput1">Fecha:</label>
-                <input ng-model="startingDate" type="text" id="startingDate" class="form-control datepickerD"/>
+                <input ng-model="startingDate" type="date" id="startingDate" class="form-control"/>
               </div>
               <div class="col-3">
-                Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
+                Desde: <input ng-model = "startingTime" type="time" id="startingTime" class="form-control"/>
               </div>
               <div class="col-3">
-                Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+                Hasta: <input type="time" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
               </div>
               <div class="col-3">
                 <label  for="exampleFormControlInput1">Almacen</label>
@@ -698,7 +762,6 @@
        </div>
       </form>
     </div>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
   </body>
 
 </html>

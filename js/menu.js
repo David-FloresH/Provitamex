@@ -3,11 +3,78 @@ let newProductID = "";
 let newProductInventory = "";
 let newProductPrice = "";
 
+
+// $.ajaxSetup({
+//   headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+// });
+// $.ajax({
+//   method: 'GET',
+//   jsonp: 'callback',
+//   url: 'http://localhost:8081/orders',
+//   contentType: "application/json; charset=utf-8",
+//   dataType: 'json',
+//   data: JSON.stringify({
+//     status: "1",
+//     orderDate: "",
+//     warehouseId: ""
+//   }),
+//   beforeSend: function(xhr,settings){
+//     //spinner show;
+//   },
+//   success: function(response){
+//     console.log(response);
+//   },
+//   error: function(xhr,status,errorThrown) {
+//     Swal.fire("Error", "Ha ocurrido un error.", "error");
+//     console.log(status);
+//   },
+//   complete: function(xhr, status){
+
+//   }
+// });
+
+
 var app = angular.module("myApp", []);
 var scope;
 
 window.onload = function(){
   scope = angular.element($('#scope')).scope();
+  scope.currentOrders = [];
+  scope.orders = 
+      [
+        {
+        name: "David Flores",
+        scheduled: "9:00 AM - 11:00 AM",
+        address: "cagliari 2267",
+        active: 1,
+        warehouse: "Ivan"
+        },
+        {
+          name: "Manuel Montoya",
+          scheduled: "8:00 AM - 9:00 AM",
+          address: "rio mayo #1382 Col. Santa Teresa",
+          active: 1,
+          warehouse: "Ivan"
+        },
+        {
+          name: "Sofia Villavicencio",
+          scheduled: "12:00 PM - 2:00 PM",
+          address: "Mexicali",
+          active: 1,
+          warehouse: "Ivan"
+        },
+        {
+          name: "Jonathan Hernandez",
+          scheduled: "7:00 AM - 8:00 AM",
+          address: "residencias",
+          active: 0,
+          warehouse: "Ivan"
+        }
+      ]
+
+  scope.warehousesList = [];
+  getCalendarWarehouses();
+  scope.$apply();
 }
 
 app.controller("MainController", ['$scope', function($scope) {
@@ -16,14 +83,24 @@ app.controller("MainController", ['$scope', function($scope) {
       Público : "f706d48f-1c23-4d4b-8f37-afb803e394a9",
       Mayoreo : "d280c8ee-6226-4cb3-9005-05f3658d4c42",
     }
+
+    $scope.whichButtonIsIt = function(order){
+      if(order.active){
+        return "btn btn-warning";
+      }
+      else{
+        return "btn btn-danger";
+      }
+    }
   
     $scope.showForm = false;
     $scope.showCompletedForm = false;
-    $scope.showCalendar = true;
+    $scope.showCalendar = false;
     $scope.showLoading = false;
     $scope.showLoadingModal = false;
     $scope.showLoadingTable = false;
     $scope.warehouseChanged = false;
+    $scope.activeOrClosed = "";
     $scope.startingTime = "";
     $scope.finishingTime = "";
     $scope.startingDate = "";
@@ -32,6 +109,8 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.addedProduct = "";
     $scope.clientPhone = "";
     $scope.priceListID = "";
+    $scope.calendarWarehouse = "";
+    $scope.pickedDate = new Date();
     $scope.disableDiscountInput = false;
     $scope.subtotal = 0;
     $scope.discount = 0;
@@ -368,6 +447,39 @@ app.controller("MainController", ['$scope', function($scope) {
       console.log(url);
             document.getElementById('enlace2').setAttribute('href',url); 
     }
+
+    $scope.dateChanged = function(){
+      console.log("cambio de fecha")
+    }
+
+    $scope.changeOrders = function(){
+      $scope.currentOrders = [];
+      console.log($scope.calendarWarehouse)
+      $scope.orders.forEach(element => {
+        if(element.warehouse == $scope.calendarWarehouse.name && element.active == 1){
+          $scope.currentOrders.push(element);
+        }
+      })
+    }
+
+    $scope.changeOrdersStatus = function(){
+      console.log($scope.activeOrClosed);
+      $scope.currentOrders = [];
+      if($scope.activeOrClosed == "Activo"){
+        $scope.orders.forEach(element => {
+          if(element.active == 1){
+            $scope.currentOrders.push(element);
+          }
+        })
+      }
+      else{
+        $scope.orders.forEach(element => {
+          if(element.active == 0){
+            $scope.currentOrders.push(element);
+          }
+        })
+      }
+    }
     
 }]);
 
@@ -579,7 +691,7 @@ function getCompletedFormInfo() {
       success: function(response){
         console.log(response);
         scope.clientPhone = response.telephones;
-        scope.clientAddress = response.addresses[0];
+        scope.clientAddress = response.comments;
         scope.priceListID = response.priceListID;
         scope.$apply();
       },
@@ -1049,6 +1161,35 @@ function editClientRequest(clientInfo){
         });
       }
      })
+
      
+}
+
+function getCalendarWarehouses(){
+  
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/warehouses',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      scope.calendarWarehousesList = response;
+      console.log(scope.calendarWarehousesList)
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      
+    }
+  });
 }
 
