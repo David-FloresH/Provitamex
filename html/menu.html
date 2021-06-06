@@ -5,9 +5,8 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../css/tabl.css"> 
-    <!-- <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script> -->
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="../css/tabl.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
@@ -20,13 +19,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     
   </head>
-  <body ng-app='myApp' ng-controller="MainController"  ng-controller = "Controller" id="scope">
+  <body ng-app='myApp' ng-controller="MainController" id="scope">
     <div class='headerColor' style="background-color: #000066;">manolon</div>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -58,290 +58,87 @@
     </nav>
 
     <div  ng-show = "showButtons">
-    <div >
-      <button type="button" class="btn btn-primary" ng-click = "OrderDetails()"  data-bs-toggle="modal" data-bs-target="#orderDetailsModal">Orden</button>
-      <button type="button" class="btn btn-primary" ng-click = "OrderDetails2()" >Orden 2</button>
-
-    </div>
-    </div>
-
-    <div ng-show = "showOrderDetailsMobile">
-      <div class="d-flex justify-content-center" ng-if = "showLoadingOrderDetails" style = "margin-top:10% ;">
-        <div class="spinner-border" role="status">
-          <span class="sr-only"></span>
-        </div>
+      <div >
+        <button type="button" class="btn btn-primary" ng-click = "OrderDetails()"  data-bs-toggle="modal" data-bs-target="#orderDetailsModal">Orden</button>
+        <button type="button" class="btn btn-primary" ng-click = "OrderDetails2()" >Orden 2</button>
+  
       </div>
-      <div ng-show = "showDetails">
-        <div class="row" style = "margin-left: 2%;">
-          <label style="font-style: bold; margin-top: 10px;" >Cliente</label>
-        </div>
-        <div class="row" style = "margin-left: 2%;">
-          <div class="col-11">
-            <input type="name"  readonly class="form-control" id="displayOrdersDetailsName" ng-model="OrderDetailsName">
-          </div>
-        </div>
-       <div class="row" style = "margin-left: 2%;"> 
-          <div class="col-11">
-            <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Domicilio</label>
-            <input type="name" readonly class="form-control" id="displayOrderDetailsAddress"   ng-model="OrderDetailsAddress">
-          </div>
-        </div> 
-        <div class="row" style = "margin-left: 2%;">
-          <a  rel="nofollow" id="enlace3" href="#" ng-click="getUrl3(OrderDetailsAddress)"  target="_blank">Ver Ubicación</a>
-        </div>
-        <div class="row" style="font-style: bold; margin-top: 10px;margin-left: 2%;">
-          <div class="col-6">
-            <label style="font-style: bold" for="exampleFormControlInput1">Celular</label>
-            <input type="name" readonly class="form-control" id="displayOrderDetailsPhone" aria-describedby="emailHelp" ng-model="OrderDetailsphone">
-          </div>
+      </div>
+
+    <div ng-show="showCalendar">
+      <div class="row" style="margin-top: 1rem; margin-left: 1%;">
+        <div class="row">
           <div class="col-5">
-            <label  for="exampleFormControlInput1">Fecha:</label>
-            <input ng-model="OrderDetailsDate" type="text" id="startingDate" class="form-control" readonly>
+
           </div>
         </div>
-        <div class="row"  style="font-style: bold; margin-top: 10px;margin-left: 2%;">
-          <div class="col-3">
-            Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
+        <div class="row">
+          <div class="col-9" style="margin-left: 12%;">
+            <label style="font-weight: bold;font-size: 20px;" for="">Ordenes del día: {{pickedDate | date: "dd/MM/yyyy"}}</label>
           </div>
-          <div class="col-3">
-            Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+        </div>
+      </div>
+      <div>
+        <hr>
+      </div>
+      <div class="row" style="margin-top: 1rem; margin-left: 1%;">
+        <div class="row" style="margin-top: 5%;">
+          <div class="col-5">
+            <label style="font-size: 15px;" for="">Selecciona Fecha:</label>
           </div>
-          <div class = "col-1"></div>
           <div class="col-4">
-            <label  for="exampleFormControlInput1">Almacen</label>
-            <input type="name" readonly class="form-control" id="displayOrderWarehouse" aria-describedby="emailHelp" ng-model="OrderDetailsWarehouse">
+            <label style="font-size: 15px;" for="">Status:</label>
+          </div>
+          <div class="col-3">
+            <label style="font-size: 15px;" for="">Almacen:</label>
           </div>
         </div>
-        <div class="row" style="margin-top: 30px; margin-bottom: 20px; margin-left: 2%;">
-          <hr>
-        </div>
-        <div class="row" style = "margin-left: 2%;">
-          <div class="col-6">
-            <label for="exampleFormControlInput1" style = "font-weight: bold;">Productos:</label>
-         </div>
-       </div>
-       <div class = "row" style = "margin-left: 2%;font-size: smaller;">
-         <div class = "col-7"></div>
-         <div class = "col-2">
-           <label >Cantidad:</label>
-         </div>
-         <div class = "col-2">
-           <label> Precio:</label>
-         </div>
-       </div>
-        <div class="row" ng-repeat="x in OrderDetailsProducts" style="margin-top: 5%; margin-left: 2%;">
-          <div class="col-7">
-            <input readonly class="form-control" ng-model="x.name" placeholder="OrderDetailsProducts.name">
+        <div class="row">
+          <div class="col-5">
+            <input ng-model="pickedDate" class="form-control" type="date" style="margin-left: 0px;" ng-change="dateChanged()">
           </div>
-          <div class="col-2" style = "text-align: center;">
-            {{x.qty | number: 0}}
+          <div class="col-4">
+            <select  class="form-control" name="" id="" ng-change="changeOrdersStatus()" ng-model="activeOrClosed">
+              <option selected>Activo</option>
+              <option>Cerrado</option>
+            </select>
           </div>
-          <div class="col-2" style="padding-top: 0.5%; font-size: 16px; font-weight: bold;text-align: center;">
-            {{x.price | currency}}
+          <div class="col-3">
+            <select  class="form-control" ng-model="calendarWarehouse" ng-options="warehouse as warehouse.name for warehouse in calendarWarehousesList" ng-change="changeOrders()"></select>
           </div>
         </div>
-        <div>
-          <div class="row" style="margin-top:1%;margin-left: 2%;">
-            <div class="col-9"> </div>
-            <div class="col-2" style="padding-right: 8%;">
-              <hr>
+        <div class="row">
+          <div class="row" ng-repeat="order in currentOrders">
+            <div class="col-1">
             </div>
-          </div>
-          <div class="row" style = "margin-left: 2%;">
-            <div class="col-5"></div>
-            <div class="col-3" style="text-align: right;">
-              Subtotal:
-            </div>
-            <div class="col-3">
-              <input ng-model="OrderDetailsSubtotal" type="text" id="" class="form-control" style="height: 70%; text-align:right" readonly>
-            </div>
-          </div>
-          <div class="row" style = "margin-left: 2%;">
-            <div class="col-5"></div>
-            <div class="col-3" style="text-align: right;" >
-              Descuento:
-            </div>
-            <div class="col-3">
-              <input ng-model="OrderDetailsDiscount"  type="text" id="discountValue" class="form-control" style="height: 70%; text-align:right" readonly>
-            </div>
-          </div>
-          <div class="row" style = "margin-left: 2%;">
-            <div class="col-5"> </div>
-            <div class="col-3" style="text-align: right;">
-              Total de Venta:
-            </div>
-            <div class="col-3">
-              <input type="text" ng-model="OrderDetailsTotal" class="form-control" style="height: 70%; text-align:right" readonly>
-            </div>
-          </div> 
-        </div>
-        <div class = "row" style = " margin-left:13% ;margin-top: 2%;">
-          <div class = "col-5">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-disabled = "disableEditOrder">Editar Pedido</button>
-          </div>
-          <div class = "col-6">
-          <button type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#collapsePayment" ng-click="disable()" >Registrar Venta </button>
-          </div>          
-        </div>       
-        <div class="collapse" id="collapsePayment">
-          <div class="card card-body">
-            <button type="button" class="btn btn-outline-primary "  ng-repeat = "x in bankAccounts track by $index" ng-click = "bankAccount($index)"   style = "margin-top: 2%;">{{x.name}}</button>
-          </div>
-            <label>Seleccione el método de pago</label>
-            <div class = "row">
-            <div class = "col-13">
-              <select ng-model="newInvoicePaymentMethod"  type="button" ng-options="x for (x, y) in paymentMethods" class = "form-select" ng-change="showFinishInvoice=false"> 
-              </select>
-            </div>
-            </div>
-            <div class = "row" style = "margin-right: 25%; margin-left:25%; margin-top:2%">
-              <button type="submit" class = "btn btn-primary" ng-disabled = "showFinishInvoice" ng-click= "finishInvoice()"> Finalizar Venta</button>
-            </div>
- 
-         
-          
-        </div>
-        
-
-      </div>
-      </div>
-    
-    
-    <div  class="modal fade" id="orderDetailsModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="ModalLabel">Detalles del Pedido</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
-              <div class="spinner-border text-dark" role="status">
-                <span class="sr-only"></span>
-              </div>
-            </div>
-            <div ng-show = "showOrderDetails">
-            <div class="row">
-              <label style="font-style: bold; margin-top: 10px;" >Cliente</label>
-            </div>
-            <div class="row">
-              <div class="col-13">
-                <input type="name"  readonly class="form-control" id="displayOrdersDetailsName" ng-model="OrderDetailsName">
-              </div>
-            </div>
-           <div class="row"> 
-              <div class="col-13">
-                <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Domicilio</label>
-                <input type="name" readonly class="form-control" id="displayOrderDetailsAddress"   ng-model="OrderDetailsAddress">
-              </div>
-            </div> 
-            <div class="row">
-              <a  rel="nofollow" id="enlace3" href="#" ng-click="getUrl3(OrderDetailsAddress)"  target="_blank">Ver Ubicación</a>
-            </div>
-            <div class="row" style="font-style: bold; margin-top: 10px;">
-              <div class="col-6">
-                <label style="font-style: bold" for="exampleFormControlInput1">Celular</label>
-                <input type="name" readonly class="form-control" id="displayOrderDetailsPhone" aria-describedby="emailHelp" ng-model="OrderDetailsphone">
-              </div>
-              <div class="col-6">
-                <label  for="exampleFormControlInput1">Fecha:</label>
-                <input ng-model="OrderDetailsDate" type="text" id="startingDate" class="form-control" readonly>
-              </div>
-            </div>
-            <div class="row"  style="font-style: bold; margin-top: 10px;">
-              <div class="col-4">
-                Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
-              </div>
-              <div class="col-4">
-                Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
-              </div>
-              <div class="col-4">
-                <label  for="exampleFormControlInput1">Almacen</label>
-                <input type="name" readonly class="form-control" id="displayOrderWarehouse" aria-describedby="emailHelp" ng-model="OrderDetailsWarehouse">
-              </div>
-            </div>
-            <div class="row" style="margin-top: 30px; margin-bottom: 20px;">
-              <hr>
-             </div>
-            <div class="row">
-              <div class="col-8">
-                <label for="exampleFormControlInput1" style = "font-weight: bold;">Productos:</label>
-             </div>
-           </div>
-           <div class = "row">
-             <div class = "col-8"></div>
-             <div class = "col-2">
-               <label>Cantidad:</label>
-             </div>
-             <div class = "col-2">
-               <label>Precio:</label>
-             </div>
-           </div>
-            <div class="row" ng-repeat="x in OrderDetailsProducts" style="margin-top: 5%;">
-              <div class="col-8">
-                <input readonly class="form-control" ng-model="x.name" placeholder="OrderDetailsProducts.name">
-              </div>
-              <div class="col-2" >
-                {{x.qty | number: 0}}
-              </div>
-              <div class="col-2" style="padding-top: 0.5%; font-size: 16px; font-weight: bold;">
-                {{x.price | currency}}
-              </div>
-            </div>
-            <div>
-              <div class="row" style="margin-top:1%;">
-                <div class="col-10">
+            <div class="col-12" style="margin-left: 4%; margin-top: 5%;">
+              <button ng-class="whichButtonIsIt(order)" style="width: 100%; height: 100%; border-radius: 30px;">
+                <div class="row">
+                  <span class="badge badge-primary" style="width: auto; font-size: 13px;">{{order.name}}</span>
                 </div>
-                <div class="col-3" style="padding-right: 8%;">
-                  <hr>
+                <div class="row">
+                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.address}}</span>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-7">
+                <div class="row">
+                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.scheduled}}</span>
                 </div>
-                <div class="col-2" style="text-align: right;">
-                  Subtotal:
-                </div>
-                <div class="col-3">
-                  <input ng-model="OrderDetailsSubtotal" type="text" id="" class="form-control" style="height: 70%; text-align:right" readonly>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-7">
-                </div>
-                <div class="col-2" style="text-align: right;" >
-                  Descuento:
-                </div>
-                <div class="col-3">
-                  <input ng-model="OrderDetailsDiscount"  type="text" id="discountValue" class="form-control" style="height: 70%; text-align:right" readonly>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-6"> </div>
-                <div class="col-3" style="text-align: right;">
-                  Total de Venta:
-                </div>
-                <div class="col-3">
-                  <input type="text" ng-model="OrderDetailsTotal" class="form-control" style="height: 70%; text-align:right" readonly>
-                </div>
-              </div> 
+              </button>
             </div>
-
-            <div class="collapse" id="collapseExample">
-              <div class="card card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-              </div>
-            </div>
-    
-          </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Editar Pedido</button>
-            <button type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample"  >Registrar Venta </button>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="collapse" id="collapseClient" style = "position: absolute; top: 7%; left: 50%; size:20%; ">
+        <div class = "row">
+            <ul style="list-style-type:none; padding-left:0%">
+              <li>
+                <a class="nav-link" href="#" style="font-size: 15px;color: rgb(255, 255, 255);"   data-bs-toggle="modal" data-bs-target="#ModalNewClient" ng-click= "NewClient()" >Nuevo Cliente</a>
+              </li>
+            </ul>
+        </div>
+     </div>
+
 
      <div class="modal fade" id="searchClientModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -405,13 +202,13 @@
             <div class="row" style="font-style: bold; margin-top: 10px;">
               <div class="col-3">
                 <label  for="exampleFormControlInput1">Fecha:</label>
-                <input ng-model="startingDate" type="text" id="startingDate" class="form-control datepickerD"/>
+                <input ng-model="startingDate" type="date" id="startingDate" class="form-control"/>
               </div>
               <div class="col-3">
-                Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
+                Desde: <input ng-model = "startingTime" type="time" id="startingTime" class="form-control"/>
               </div>
               <div class="col-3">
-                Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+                Hasta: <input type="time" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
               </div>
               <div class="col-3">
                 <label  for="exampleFormControlInput1">Almacen</label>
@@ -670,39 +467,39 @@
       </div> -->
     
     
-    <div ng-show="showClientLists" >
-      <div class="d-flex justify-content-center" ng-if = "showLoadingTable" style = "margin-top:10% ;">
-        <div class="spinner-border" role="status">
-          <span class="sr-only"></span>
+      <div ng-show="showClientLists" >
+        <div class="d-flex justify-content-center" ng-if = "showLoadingTable" style = "margin-top:10% ;">
+          <div class="spinner-border" role="status">
+            <span class="sr-only"></span>
+          </div>
         </div>
+          <div ng-model="clientsTable"  ng-if = "!showLoadingTable">
+           
+            <table class = "table table-hover" style = "max-width: 50%;margin-left: 25%; margin-top: 5%;">
+              <thead>
+                <tr>
+                  <th>
+                     Buscar: <input class="form-control" ng-model="searchText">
+                  </th>
+                </tr>
+                <tr>
+                    <th colspan = "2" scope = "col" >Nombre del cliente</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="x in clientList | filter:searchText track by x.id">
+                  <td  ng-model = "editClientSelect"  style = "width: 95%;" ng-click= "showDetailsBox(x.id)" data-bs-toggle="modal" data-bs-target="#ModalClientsDetails">{{ x.clientName }}</td>
+                  <td style= "width: max-content;">
+                    <div class="buttons">
+                      <button class="btn btn-danger" ng-click = "deleteClient($index)" value = "x.id">x</button>
+                    </div>
+                </td>
+                </tr>
+              </tbody>
+            </table>
+          </div> 
+        
       </div>
-        <div ng-model="clientsTable"  ng-if = "!showLoadingTable">
-         
-          <table class = "table table-hover" style = "max-width: 50%;margin-left: 25%; margin-top: 5%;">
-            <thead>
-              <tr>
-                <th>
-                   Buscar: <input class="form-control" ng-model="searchText">
-                </th>
-              </tr>
-              <tr>
-                  <th colspan = "2" scope = "col" >Nombre del cliente</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="x in clientList | filter:searchText track by x.id">
-                <td  ng-model = "editClientSelect"  style = "width: 95%;" ng-click= "showDetailsBox(x.id)" data-bs-toggle="modal" data-bs-target="#ModalClientsDetails">{{ x.clientName }}</td>
-                <td style= "width: max-content;">
-                  <div class="buttons">
-                    <button class="btn btn-danger" ng-click = "deleteClient($index)" value = "x.id">x</button>
-                  </div>
-              </td>
-              </tr>
-            </tbody>
-          </table>
-        </div> 
-      
-    </div>
 
     <div class="modal fade" id="ModalClientsDetails" id="staticBackdrop"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -712,16 +509,17 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+
             <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
               <div class="spinner-border text-dark" role="status">
                 <span class="sr-only"></span>
               </div>
             </div>
 
-            <div ng-show = "showClientsDetails" ng-if = "!showLoadingModal">
+          <div ng-if = "!showLoadingModal">
             <div class = "row" style="margin-top: 2%;" >
               <label> Nombre:</label>
-              </div> 
+            </div> 
             <div class = "row" >
               <div class = "col-13">
                 <input ng-model="clientNameDetails" type="text" class="form-control" id="DetailsName" readonly>
@@ -740,9 +538,6 @@
             </div>
             <div class = "col-13">
               <input ng-model="clientAddressDetails" type="text" class="form-control" id="DetailsAddress" readonly>
-            </div>
-            <div class="row">
-              <a  rel="nofollow" id="enlace3" href="#" ng-click="getUrl3(clientAddressDetails)"  target="_blank">Ver Ubicación</a>
             </div>
             <div class = "row" style="margin-top: 2%;">
               <label> Lista de Precios</label>
@@ -841,9 +636,10 @@
               <button type="submit" class="btn btn-primary" ng-click ="EditClientSetup()"  >Guardar </button>
             </div>
           </div>
-
-
-          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"   ng-click= "closeDetailsModal()">Editar</button>
+          </div>
           </div>
         </div>
       </div>
@@ -1070,10 +866,285 @@
        </div>
       </form>
     </div>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+
+    
+    <div ng-show = "showOrderDetailsMobile">
+      <div class="d-flex justify-content-center" ng-if = "showLoadingOrderDetails" style = "margin-top:10% ;">
+        <div class="spinner-border" role="status">
+          <span class="sr-only"></span>
+        </div>
+      </div>
+      <div ng-show = "showDetails">
+        <div class="row" style = "margin-left: 2%;">
+          <label style="font-style: bold; margin-top: 10px;" >Cliente</label>
+        </div>
+        <div class="row" style = "margin-left: 2%;">
+          <div class="col-11">
+            <input type="name"  readonly class="form-control" id="displayOrdersDetailsName" ng-model="OrderDetailsName">
+          </div>
+        </div>
+       <div class="row" style = "margin-left: 2%;"> 
+          <div class="col-11">
+            <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Domicilio</label>
+            <input type="name" readonly class="form-control" id="displayOrderDetailsAddress"   ng-model="OrderDetailsAddress">
+          </div>
+        </div> 
+        <div class="row" style = "margin-left: 2%;">
+          <a  rel="nofollow" id="enlace3" href="#" ng-click="getUrl3(OrderDetailsAddress)"  target="_blank">Ver Ubicación</a>
+        </div>
+        <div class="row" style="font-style: bold; margin-top: 10px;margin-left: 2%;">
+          <div class="col-6">
+            <label style="font-style: bold" for="exampleFormControlInput1">Celular</label>
+            <input type="name" readonly class="form-control" id="displayOrderDetailsPhone" aria-describedby="emailHelp" ng-model="OrderDetailsphone">
+          </div>
+          <div class="col-5">
+            <label  for="exampleFormControlInput1">Fecha:</label>
+            <input ng-model="OrderDetailsDate" type="text" id="startingDate" class="form-control" readonly>
+          </div>
+        </div>
+        <div class="row"  style="font-style: bold; margin-top: 10px;margin-left: 2%;">
+          <div class="col-3">
+            Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
+          </div>
+          <div class="col-3">
+            Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+          </div>
+          <div class = "col-1"></div>
+          <div class="col-4">
+            <label  for="exampleFormControlInput1">Almacen</label>
+            <input type="name" readonly class="form-control" id="displayOrderWarehouse" aria-describedby="emailHelp" ng-model="OrderDetailsWarehouse">
+          </div>
+        </div>
+        <div class="row" style="margin-top: 30px; margin-bottom: 20px; margin-left: 2%;">
+          <hr>
+        </div>
+        <div class="row" style = "margin-left: 2%;">
+          <div class="col-6">
+            <label for="exampleFormControlInput1" style = "font-weight: bold;">Productos:</label>
+         </div>
+       </div>
+       <div class = "row" style = "margin-left: 2%;font-size: smaller;">
+         <div class = "col-7"></div>
+         <div class = "col-2">
+           <label >Cantidad:</label>
+         </div>
+         <div class = "col-2">
+           <label> Precio:</label>
+         </div>
+       </div>
+        <div class="row" ng-repeat="x in OrderDetailsProducts" style="margin-top: 5%; margin-left: 2%;">
+          <div class="col-7">
+            <input readonly class="form-control" ng-model="x.name" placeholder="OrderDetailsProducts.name">
+          </div>
+          <div class="col-2" style = "text-align: center;">
+            {{x.qty | number: 0}}
+          </div>
+          <div class="col-2" style="padding-top: 0.5%; font-size: 16px; font-weight: bold;text-align: center;">
+            {{x.price | currency}}
+          </div>
+        </div>
+        <div>
+          <div class="row" style="margin-top:1%;margin-left: 2%;">
+            <div class="col-9"> </div>
+            <div class="col-2" style="padding-right: 8%;">
+              <hr>
+            </div>
+          </div>
+          <div class="row" style = "margin-left: 2%;">
+            <div class="col-5"></div>
+            <div class="col-3" style="text-align: right;">
+              Subtotal:
+            </div>
+            <div class="col-3">
+              <input ng-model="OrderDetailsSubtotal" type="text" id="" class="form-control" style="height: 70%; text-align:right" readonly>
+            </div>
+          </div>
+          <div class="row" style = "margin-left: 2%;">
+            <div class="col-5"></div>
+            <div class="col-3" style="text-align: right;" >
+              Descuento:
+            </div>
+            <div class="col-3">
+              <input ng-model="OrderDetailsDiscount"  type="text" id="discountValue" class="form-control" style="height: 70%; text-align:right" readonly>
+            </div>
+          </div>
+          <div class="row" style = "margin-left: 2%;">
+            <div class="col-5"> </div>
+            <div class="col-3" style="text-align: right;">
+              Total de Venta:
+            </div>
+            <div class="col-3">
+              <input type="text" ng-model="OrderDetailsTotal" class="form-control" style="height: 70%; text-align:right" readonly>
+            </div>
+          </div> 
+        </div>
+        <div class = "row" style = " margin-left:13% ;margin-top: 2%;">
+          <div class = "col-5">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-disabled = "disableEditOrder">Editar Pedido</button>
+          </div>
+          <div class = "col-6">
+          <button type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#collapsePayment" ng-click="disable()" >Registrar Venta </button>
+          </div>          
+        </div>       
+        <div class="collapse" id="collapsePayment">
+          <div class="card card-body">
+            <button type="button" class="btn btn-outline-primary "  ng-repeat = "x in bankAccounts track by $index" ng-click = "bankAccount($index)"   style = "margin-top: 2%;">{{x.name}}</button>
+          </div>
+            <label>Seleccione el método de pago</label>
+            <div class = "row">
+            <div class = "col-13">
+              <select ng-model="newInvoicePaymentMethod"  type="button" ng-options="x for (x, y) in paymentMethods" class = "form-select" ng-change="showFinishInvoice=false"> 
+              </select>
+            </div>
+            </div>
+            <div class = "row" style = "margin-right: 25%; margin-left:25%; margin-top:2%">
+              <button type="submit" class = "btn btn-primary" ng-disabled = "showFinishInvoice" ng-click= "finishInvoice()"> Finalizar Venta</button>
+            </div>
+        </div>
+      </div>
+      </div>
+ 
+      <div  class="modal fade" id="orderDetailsModal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Detalles del Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div ng-if="showLoadingModal" style="text-align: center; vertical-align: middle;">
+                <div class="spinner-border text-dark" role="status">
+                  <span class="sr-only"></span>
+                </div>
+              </div>
+              <div ng-show = "showOrderDetails">
+              <div class="row">
+                <label style="font-style: bold; margin-top: 10px;" >Cliente</label>
+              </div>
+              <div class="row">
+                <div class="col-13">
+                  <input type="name"  readonly class="form-control" id="displayOrdersDetailsName" ng-model="OrderDetailsName">
+                </div>
+              </div>
+             <div class="row"> 
+                <div class="col-13">
+                  <label style="font-style: bold; margin-top: 30px;" for="exampleFormControlInput1">Domicilio</label>
+                  <input type="name" readonly class="form-control" id="displayOrderDetailsAddress"   ng-model="OrderDetailsAddress">
+                </div>
+              </div> 
+              <div class="row">
+                <a  rel="nofollow" id="enlace3" href="#" ng-click="getUrl3(OrderDetailsAddress)"  target="_blank">Ver Ubicación</a>
+              </div>
+              <div class="row" style="font-style: bold; margin-top: 10px;">
+                <div class="col-6">
+                  <label style="font-style: bold" for="exampleFormControlInput1">Celular</label>
+                  <input type="name" readonly class="form-control" id="displayOrderDetailsPhone" aria-describedby="emailHelp" ng-model="OrderDetailsphone">
+                </div>
+                <div class="col-6">
+                  <label  for="exampleFormControlInput1">Fecha:</label>
+                  <input ng-model="OrderDetailsDate" type="text" id="startingDate" class="form-control" readonly>
+                </div>
+              </div>
+              <div class="row"  style="font-style: bold; margin-top: 10px;">
+                <div class="col-4">
+                  Desde: <input ng-model = "startingTime" type="text" id="startingTime" class="form-control timepicker"/>
+                </div>
+                <div class="col-4">
+                  Hasta: <input type="text" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+                </div>
+                <div class="col-4">
+                  <label  for="exampleFormControlInput1">Almacen</label>
+                  <input type="name" readonly class="form-control" id="displayOrderWarehouse" aria-describedby="emailHelp" ng-model="OrderDetailsWarehouse">
+                </div>
+              </div>
+              <div class="row" style="margin-top: 30px; margin-bottom: 20px;">
+                <hr>
+               </div>
+              <div class="row">
+                <div class="col-8">
+                  <label for="exampleFormControlInput1" style = "font-weight: bold;">Productos:</label>
+               </div>
+             </div>
+             <div class = "row">
+               <div class = "col-8"></div>
+               <div class = "col-2">
+                 <label>Cantidad:</label>
+               </div>
+               <div class = "col-2">
+                 <label>Precio:</label>
+               </div>
+             </div>
+              <div class="row" ng-repeat="x in OrderDetailsProducts" style="margin-top: 5%;">
+                <div class="col-8">
+                  <input readonly class="form-control" ng-model="x.name" placeholder="OrderDetailsProducts.name">
+                </div>
+                <div class="col-2" >
+                  {{x.qty | number: 0}}
+                </div>
+                <div class="col-2" style="padding-top: 0.5%; font-size: 16px; font-weight: bold;">
+                  {{x.price | currency}}
+                </div>
+              </div>
+              <div>
+                <div class="row" style="margin-top:1%;">
+                  <div class="col-10">
+                  </div>
+                  <div class="col-3" style="padding-right: 8%;">
+                    <hr>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-7">
+                  </div>
+                  <div class="col-2" style="text-align: right;">
+                    Subtotal:
+                  </div>
+                  <div class="col-3">
+                    <input ng-model="OrderDetailsSubtotal" type="text" id="" class="form-control" style="height: 70%; text-align:right" readonly>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-7">
+                  </div>
+                  <div class="col-2" style="text-align: right;" >
+                    Descuento:
+                  </div>
+                  <div class="col-3">
+                    <input ng-model="OrderDetailsDiscount"  type="text" id="discountValue" class="form-control" style="height: 70%; text-align:right" readonly>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6"> </div>
+                  <div class="col-3" style="text-align: right;">
+                    Total de Venta:
+                  </div>
+                  <div class="col-3">
+                    <input type="text" ng-model="OrderDetailsTotal" class="form-control" style="height: 70%; text-align:right" readonly>
+                  </div>
+                </div> 
+              </div>
+  
+              <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+              </div>
+      
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Editar Pedido</button>
+              <button type="submit" class="btn btn-primary" data-toggle="collapse" data-target="#collapseExample"  >Registrar Venta </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
   </body>
 
 </html>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 <script src="../js/menu.js"></script> 
-<!-- <script scr="../js/orders.js"></script> -->

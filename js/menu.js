@@ -3,11 +3,78 @@ let newProductID = "";
 let newProductInventory = "";
 let newProductPrice = "";
 
+
+// $.ajaxSetup({
+//   headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+// });
+// $.ajax({
+//   method: 'GET',
+//   jsonp: 'callback',
+//   url: 'http://localhost:8081/orders',
+//   contentType: "application/json; charset=utf-8",
+//   dataType: 'json',
+//   data: JSON.stringify({
+//     status: "1",
+//     orderDate: "",
+//     warehouseId: ""
+//   }),
+//   beforeSend: function(xhr,settings){
+//     //spinner show;
+//   },
+//   success: function(response){
+//     console.log(response);
+//   },
+//   error: function(xhr,status,errorThrown) {
+//     Swal.fire("Error", "Ha ocurrido un error.", "error");
+//     console.log(status);
+//   },
+//   complete: function(xhr, status){
+
+//   }
+// });
+
+
 var app = angular.module("myApp", []);
 var scope;
 
 window.onload = function(){
   scope = angular.element($('#scope')).scope();
+  scope.currentOrders = [];
+  scope.orders = 
+      [
+        {
+        name: "David Flores",
+        scheduled: "9:00 AM - 11:00 AM",
+        address: "cagliari 2267",
+        active: 1,
+        warehouse: "Ivan"
+        },
+        {
+          name: "Manuel Montoya",
+          scheduled: "8:00 AM - 9:00 AM",
+          address: "rio mayo #1382 Col. Santa Teresa",
+          active: 1,
+          warehouse: "Ivan"
+        },
+        {
+          name: "Sofia Villavicencio",
+          scheduled: "12:00 PM - 2:00 PM",
+          address: "Mexicali",
+          active: 1,
+          warehouse: "Ivan"
+        },
+        {
+          name: "Jonathan Hernandez",
+          scheduled: "7:00 AM - 8:00 AM",
+          address: "residencias",
+          active: 0,
+          warehouse: "Ivan"
+        }
+      ]
+
+  scope.warehousesList = [];
+  getCalendarWarehouses();
+  scope.$apply();
 }
 
 app.controller("MainController", ['$scope', function($scope) {
@@ -17,6 +84,14 @@ app.controller("MainController", ['$scope', function($scope) {
       Mayoreo : "d280c8ee-6226-4cb3-9005-05f3658d4c42",
     }
 
+    $scope.whichButtonIsIt = function(order){
+      if(order.active){
+        return "btn btn-warning";
+      }
+      else{
+        return "btn btn-danger";
+      }
+    }
     $scope.paymentMethods ={
       Efectivo : "1", 
       TarjetaCredito: "2", 
@@ -26,12 +101,13 @@ app.controller("MainController", ['$scope', function($scope) {
   
     $scope.showForm = false;
     $scope.showCompletedForm = false;
-    $scope.showCalendar = true;
+    $scope.showCalendar = false;
     $scope.showLoading = false;
     $scope.showLoadingModal = false;
     $scope.showOrderDetails = false; 
     $scope.showLoadingTable = false;
     $scope.warehouseChanged = false;
+    $scope.activeOrClosed = "";
     $scope.showDetails = false;
     $scope.showOrderDetailsMobile = false;
     $scope.showButtons = true;
@@ -44,6 +120,8 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.addedProduct = "";
     $scope.clientPhone = "";
     $scope.priceListID = "";
+    $scope.calendarWarehouse = "";
+    $scope.pickedDate = new Date();
     $scope.disableDiscountInput = false;
     $scope.subtotal = 0;
     $scope.discount = 0;
@@ -399,6 +477,39 @@ app.controller("MainController", ['$scope', function($scope) {
             document.getElementById('enlace2').setAttribute('href',url); 
     }
 
+    $scope.dateChanged = function(){
+      console.log("cambio de fecha")
+    }
+
+    $scope.changeOrders = function(){
+      $scope.currentOrders = [];
+      console.log($scope.calendarWarehouse)
+      $scope.orders.forEach(element => {
+        if(element.warehouse == $scope.calendarWarehouse.name && element.active == 1){
+          $scope.currentOrders.push(element);
+        }
+      })
+    }
+
+    $scope.changeOrdersStatus = function(){
+      console.log($scope.activeOrClosed);
+      $scope.currentOrders = [];
+      if($scope.activeOrClosed == "Activo"){
+        $scope.orders.forEach(element => {
+          if(element.active == 1){
+            $scope.currentOrders.push(element);
+          }
+        })
+      }
+      else{
+        $scope.orders.forEach(element => {
+          if(element.active == 0){
+            $scope.currentOrders.push(element);
+          }
+        })
+      }
+    }
+    
     $scope.getUrl3 = function(){
       $scope.completeAddress = $scope.OrderDetailsAddress; 
       console.log($scope.completeAddress);
@@ -448,35 +559,35 @@ app.controller("MainController", ['$scope', function($scope) {
       }else {
         $scope.disableEditOrder = false;
       }
-     
     }
 
     $scope.bankAccount = function(index){
-        $scope.selectedBankAccount = $scope.bankAccounts[index].id;
-        console.log('Bank account '+$scope.selectedBankAccount); 
-    }
+      $scope.selectedBankAccount = $scope.bankAccounts[index].id;
+      console.log('Bank account '+$scope.selectedBankAccount); 
+  }
 
-    $scope.finishInvoice = function(){
-        newInvoice = {
-        clientID: $scope.OrderDetailsClientId,  
-        locationId: $scope.OrderDetailsLocationID,  
-        pricelistId:$scope.clientsPriceListID, 
-        warehouseId:$scope.OrdersDetailsWarehouseId,
-        products: $scope.OrderProducts,
-        payments:[
-            {
-                PaymentMethod: $scope.newInvoicePaymentMethod, 
-                AccountID: $scope.selectedBankAccount, 
-                Amount: $scope.OrderDetailsTotal 
-            }
-        ],
-       }
-       newInvoiceRequest(newInvoice); 
-    }
 
-    
-    
-}]);
+  $scope.finishInvoice = function(){
+    newInvoice = {
+    clientID: $scope.OrderDetailsClientId,  
+    locationId: $scope.OrderDetailsLocationID,  
+    pricelistId:$scope.clientsPriceListID, 
+    warehouseId:$scope.OrdersDetailsWarehouseId,
+    products: $scope.OrderProducts,
+    payments:[
+        {
+            PaymentMethod: $scope.newInvoicePaymentMethod, 
+            AccountID: $scope.selectedBankAccount, 
+            Amount: $scope.OrderDetailsTotal 
+        }
+    ],
+   }
+   newInvoiceRequest(newInvoice); 
+}
+
+       
+      
+}])
 
 
 
@@ -686,7 +797,7 @@ function getCompletedFormInfo() {
       success: function(response){
         console.log(response);
         scope.clientPhone = response.telephones;
-        scope.clientAddress = response.addresses[0];
+        scope.clientAddress = response.comments;
         scope.priceListID = response.priceListID;
         scope.$apply();
       },
@@ -1128,66 +1239,94 @@ function deleteClient(Name, ID){
 }
 
 function editClientRequest(clientInfo){
- console.log(clientInfo)
-  Swal.fire({
-    title: '¿Seguro que desea editar?',
-    text: "Esta acción no podrá revertirse",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Editar '
-     }).then((result) => {
-      if (result.isConfirmed) {
-        console.log(clientInfo)
-        $.ajax({
-          method: 'POST',
-          jsonp: 'callback',
-          url: 'http://localhost:8081/client/edit',
-          contentType: "application/json; charset=utf-8",
-          dataType: 'json',
-          data: JSON.stringify({
-              id: clientInfo.Id,
-              legalName: clientInfo.ClientName, 
-              pricelistId: clientInfo.PriceList, 
-              telephone: clientInfo.Telephone, 
-              streetName: clientInfo.Street, 
-              exteriorNo :clientInfo.ExtNumber,  
-              colonia: clientInfo.Neighborhood, 
-              zipCode: clientInfo.ZipCode,
-              city: clientInfo.City, 
-              state: clientInfo.State, 
-              interiorNo: clientInfo.IntNumber, 
-              
-            }),
-          beforeSend: function(xhr,settings){
-            //spinner show;
-          },
-          success: function(response){
-           
-          },
-          error: function(response) {
-            console.log(response);
-            if (response.responseText == 'Client Edit Success'){
-              Swal.fire(
-              'Cliente Editado',
-              'El cliente ha sido editado satisfactoriamente',
-              'success')
-            }
-            else {
-              Swal.fire(
-                'Error',
-                'Intente de nuevo',
-                'error')
+  console.log(clientInfo)
+   Swal.fire({
+     title: '¿Seguro que desea editar?',
+     text: "Esta acción no podrá revertirse",
+     icon: 'warning',
+     showCancelButton: true,
+     confirmButtonColor: '#3085d6',
+     cancelButtonColor: '#d33',
+     confirmButtonText: 'Editar '
+      }).then((result) => {
+       if (result.isConfirmed) {
+         console.log(clientInfo)
+         $.ajax({
+           method: 'POST',
+           jsonp: 'callback',
+           url: 'http://localhost:8081/client/edit',
+           contentType: "application/json; charset=utf-8",
+           dataType: 'json',
+           data: JSON.stringify({
+               id: clientInfo.Id,
+               legalName: clientInfo.ClientName, 
+               pricelistId: clientInfo.PriceList, 
+               telephone: clientInfo.Telephone, 
+               streetName: clientInfo.Street, 
+               exteriorNo :clientInfo.ExtNumber,  
+               colonia: clientInfo.Neighborhood, 
+               zipCode: clientInfo.ZipCode,
+               city: clientInfo.City, 
+               state: clientInfo.State, 
+               interiorNo: clientInfo.IntNumber, 
+               
+             }),
+           beforeSend: function(xhr,settings){
+             //spinner show;
+           },
+           success: function(response){
+            
+           },
+           error: function(response) {
+             console.log(response);
+             if (response.responseText == 'Client Edit Success'){
+               Swal.fire(
+               'Cliente Editado',
+               'El cliente ha sido editado satisfactoriamente',
+               'success')
+             }
+             else {
+               Swal.fire(
+                 'Error',
+                 'Intente de nuevo',
+                 'error')
+ 
+             }
+           },
+           complete: function(xhr, status){     
+           }
+         });
+       }
+      })
+      
+ }
+  
+ 
 
-            }
-          },
-          complete: function(xhr, status){     
-          }
-        });
-      }
-     })
-     
+function getCalendarWarehouses(){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/warehouses',
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      scope.calendarWarehousesList = response;
+      console.log(scope.calendarWarehousesList)
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+      
+    }
+  });
 }
 
 
@@ -1205,6 +1344,7 @@ function getOrderDetails(orderId, scr){
     },
     success: function(response){
       console.log(response);
+  
       scope.OrderDetailsClientId = response.clientID;
       scope.OrderDetailsName = response.clientName;
       scope.OrderDetailsphone = response.phoneNumber; 
@@ -1245,14 +1385,15 @@ function getOrderDetails(orderId, scr){
       console.log("Error");
     },
     complete: function(xhr, status){
-    }
       
-    
+    }
   });
 
 }
 
-function getBankAccounts ()
+
+
+function getBankAccounts()
 {
 
   $.ajaxSetup({
