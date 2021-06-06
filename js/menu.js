@@ -17,7 +17,7 @@ app.controller("MainController", ['$scope', function($scope) {
       Mayoreo : "d280c8ee-6226-4cb3-9005-05f3658d4c42",
     }
 
-    $scope.paymentMedoths ={
+    $scope.paymentMethods ={
       Efectivo : "1", 
       TarjetaCredito: "2", 
       TarjetaDebito: "3", 
@@ -59,7 +59,9 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.showFinishInvoice = true;
     $scope.showClientsDetails  = false; 
     $scope.showEditClient = false; 
-
+    $scope.clientsDetailsId = ''; 
+    $scope.OrderProducts = [];
+  
     $scope.NewClientInputMobile = {
       NewClientName : "",  
       SelectedPriceList:  "", 
@@ -97,6 +99,7 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showForm = false;
                 $scope.showCompletedForm = false;
                 $scope.showNewClient = false; 
+                $scope.showOrderDetailsMobile = false; 
                 break;
             
             case 1:
@@ -105,6 +108,8 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showForm = false;
                 $scope.showCompletedForm = false;
                 $scope.showNewClient = false;
+                $scope.showOrderDetailsMobile = false; 
+
                 searchClientName();
                 break;
             case 2:
@@ -112,6 +117,7 @@ app.controller("MainController", ['$scope', function($scope) {
               $scope.showForm = false;
               $scope.showCompletedForm = false;
               $scope.showNewClient = true; 
+              $scope.showOrderDetailsMobile = false; 
              
 
        }
@@ -336,22 +342,24 @@ app.controller("MainController", ['$scope', function($scope) {
      $scope.showEditClient = true; 
     }
 
-    $scope.EditClientSetup = function(ID){
-      $scope.editClientInformation = {
-        Id : ID,
+    $scope.EditClientSetup = function(){
+      console.log('price list seleccionado ' + $scope.priceListIdDetails)
+    editClientInformation = {
+        Id : $scope.clientsDetailsId,
         ClientName : $scope.clientNameDetails,  
         Telephone:  $scope.clientPhoneDetails, 
         PriceList: $scope.priceListIdDetails ,
-        Street: "", 
-        ExtNumber : "",  
-        Neighborhood:"", 
-        ZipCode:"",
-        City: "", 
-        State:"", 
-        IntNumber: ""
+        Street: $scope.ClientStreet, 
+        ExtNumber : $scope.ClientExtNumber,  
+        Neighborhood:$scope.ClientNeighborhood, 
+        ZipCode:$scope.ClientZipCode,
+        City:$scope.ClientCity, 
+        State:$scope.ClientState, 
+        IntNumber: $scope.ClientIntNumber,
+        Comments: $scope.ClientStreet+' No. '+$scope.ClientExtNumber+' '+$scope.ClientIntNumber+' Col. '+$scope.ClientNeighborhood+', '+$scope.ClientCity+', '+$scope.ClientState+' C.P '+$scope.ClientZipCode+' Mexico'
       }
-
-      editClientRequest($scope.editClientInformation);
+      console.log('edit '+editClientInformation.Comments)
+      editClientRequest(editClientInformation);
     }
 
     $scope.getUrl = function(){
@@ -445,28 +453,24 @@ app.controller("MainController", ['$scope', function($scope) {
 
     $scope.bankAccount = function(index){
         $scope.selectedBankAccount = $scope.bankAccounts[index].id;
+        console.log('Bank account '+$scope.selectedBankAccount); 
     }
 
     $scope.finishInvoice = function(){
-       console.log("terminar orden");
-
-      newInvoice = {
+        newInvoice = {
         clientID: $scope.OrderDetailsClientId,  
         locationId: $scope.OrderDetailsLocationID,  
-        priceListId:$scope.clientsPriceListID, 
+        pricelistId:$scope.clientsPriceListID, 
         warehouseId:$scope.OrdersDetailsWarehouseId,
-        products: $scope.OrderDetailsProducts,
+        products: $scope.OrderProducts,
         payments:[
             {
-                paymentMedoth: $scope.newInvoicePaymentMedoth, 
-                accountID: $scope.selectedBankAccount, 
-                amount: $scope.OrderDetailsTotal 
+                PaymentMethod: $scope.newInvoicePaymentMethod, 
+                AccountID: $scope.selectedBankAccount, 
+                Amount: $scope.OrderDetailsTotal 
             }
         ],
        }
-
-       console.log(newInvoice);
-
        newInvoiceRequest(newInvoice); 
     }
 
@@ -1047,6 +1051,18 @@ function getClientsDetails(ID){
       scope.priceListIdDetails = priceListName;
       console.log('el id en el request es '+ scope.clientsPriceListID);
       showDetailsContainer = true;
+      scope.clientsDetailsId = ID; 
+
+      scope.ClientStreet = scope.clientAddressDetails.split(' No. ')[0]; 
+      scope.ClientExtNumber = scope.clientAddressDetails.split(' ')[3]; 
+      scope.ClientIntNumber = scope.clientAddressDetails.split(' ')[4];
+      scope.ClientCity = scope.clientAddressDetails.split(',')[1];
+      scope.addressaux = scope.clientAddressDetails.split(', '); 
+      scope.ClientNeighborhood = scope.addressaux[0].split('Col. ')[1]; 
+      scope.ClientState = scope.clientAddressDetails.split(' ')[9] + ' '+ scope.clientAddressDetails.split(' ')[10]; 
+      scope.ClientZipCode = scope.clientAddressDetails.split(' ')[12];
+
+      
       scope.$apply();
     },
     error: function(xhr,status,errorThrown) {
@@ -1112,8 +1128,8 @@ function deleteClient(Name, ID){
 }
 
 function editClientRequest(clientInfo){
-
-  /* Swal.fire({
+ console.log(clientInfo)
+  Swal.fire({
     title: '¿Seguro que desea editar?',
     text: "Esta acción no podrá revertirse",
     icon: 'warning',
@@ -1122,7 +1138,8 @@ function editClientRequest(clientInfo){
     cancelButtonColor: '#d33',
     confirmButtonText: 'Editar '
      }).then((result) => {
-      if (result.isConfirmed) {*/
+      if (result.isConfirmed) {
+        console.log(clientInfo)
         $.ajax({
           method: 'POST',
           jsonp: 'callback',
@@ -1130,7 +1147,7 @@ function editClientRequest(clientInfo){
           contentType: "application/json; charset=utf-8",
           dataType: 'json',
           data: JSON.stringify({
-              ID: clientInfo.Id,
+              id: clientInfo.Id,
               legalName: clientInfo.ClientName, 
               pricelistId: clientInfo.PriceList, 
               telephone: clientInfo.Telephone, 
@@ -1140,28 +1157,36 @@ function editClientRequest(clientInfo){
               zipCode: clientInfo.ZipCode,
               city: clientInfo.City, 
               state: clientInfo.State, 
-              interiorNo: clientInfo.IntNumber   
+              interiorNo: clientInfo.IntNumber, 
               
             }),
           beforeSend: function(xhr,settings){
             //spinner show;
           },
           success: function(response){
-            resp = response; 
-            console.log('holi estoy en success');
-            Swal.fire(
+           
+          },
+          error: function(response) {
+            console.log(response);
+            if (response.responseText == 'Client Edit Success'){
+              Swal.fire(
               'Cliente Editado',
               'El cliente ha sido editado satisfactoriamente',
               'success')
-          },
-          error: function(xhr,status,errorThrown) {
-            Swal.fire('Error', 'Ocurrió un error, intente de nuevo', 'error');
+            }
+            else {
+              Swal.fire(
+                'Error',
+                'Intente de nuevo',
+                'error')
+
+            }
           },
           complete: function(xhr, status){     
           }
         });
-   /*   }
-     })*/
+      }
+     })
      
 }
 
@@ -1195,6 +1220,15 @@ function getOrderDetails(orderId, scr){
       scope.OrdersDetailsWarehouseId = response.warehouseID;
       console.log(scope.OrderDetailsName);
 
+      scope.OrderDetailsProducts.forEach(element => {
+
+        scope.OrderProducts.push({ID:element.productID,Price:element.price,Qty:element.qty})
+      
+        }
+      );
+
+      console.log('productos de la orden son' + scope.OrderProducts);
+
       if (scr == 'pc'){
         console.log('vengo de pc');
         scope.showLoadingModal = false; 
@@ -1215,6 +1249,7 @@ function getOrderDetails(orderId, scr){
       
     
   });
+
 }
 
 function getBankAccounts ()
@@ -1256,26 +1291,20 @@ function newInvoiceRequest(newInvoice)
     contentType: "application/json; charset=utf-8",
     dataType: 'json',
     data: JSON.stringify({
-        clientID: newInvoice.clientID,
+        clientId: newInvoice.clientID,
         locationId: newInvoice.locationId,  
-        priceListId:newInvoice.priceListId, 
+        pricelistId:newInvoice.pricelistId, 
         warehouseId: newInvoice.warehouseId,
         products:newInvoice.products,
-        payments:[
-            {
-                PaymentMethod: newInvoice.paymentMedoth, 
-                AccountID: newInvoice.accountID, 
-                Amount:newInvoice.amount
-            }
-        ],
-           
+        payments: newInvoice.payments
+        
        }),
     beforeSend: function(xhr,settings){
       //spinner show;
     },
     success: function(response){
-      Swal.fire("Venta Registrada", "La venta se registró correctamente", "success");   
-    },
+      Swal.fire("Venta Registrada", "La venta se registró correctamente", "success"); 
+      showOrderDetailsMobile = false;     },
     error: function(xhr,status,errorThrown) {
       console.log("Error");
     },

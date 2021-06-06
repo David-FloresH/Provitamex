@@ -185,21 +185,21 @@
         </div>       
         <div class="collapse" id="collapsePayment">
           <div class="card card-body">
-            <button type="button" class="btn btn-outline-primary "  ng-repeat = "x in bankAccounts track by $index" ng-click = "bankAccount($index)"  data-toggle="collapse" data-target="#collapsePaymentMedoth"  style = "margin-top: 2%;">{{x.name}}</button>
+            <button type="button" class="btn btn-outline-primary "  ng-repeat = "x in bankAccounts track by $index" ng-click = "bankAccount($index)"   style = "margin-top: 2%;">{{x.name}}</button>
           </div>
-          <div class="collapse" id="collapsePaymentMedoth">
-          <div class="card card-body">
             <label>Seleccione el método de pago</label>
+            <div class = "row">
             <div class = "col-13">
-              <select ng-model="newInvoicePaymentMedoth"  type="button" ng-options="x for (x, y) in paymentMedoths" class = "form-select" ng-change="showFinishInvoice=false"> 
+              <select ng-model="newInvoicePaymentMethod"  type="button" ng-options="x for (x, y) in paymentMethods" class = "form-select" ng-change="showFinishInvoice=false"> 
               </select>
+            </div>
             </div>
             <div class = "row" style = "margin-right: 25%; margin-left:25%; margin-top:2%">
               <button type="submit" class = "btn btn-primary" ng-disabled = "showFinishInvoice" ng-click= "finishInvoice()"> Finalizar Venta</button>
             </div>
  
-          </div>
-          </div>
+         
+          
         </div>
         
 
@@ -623,7 +623,7 @@
       </div>
     </div>
 
-    <div class="modal" id="ModalEditClient" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <!-- <div class="modal" id="ModalEditClient" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -667,7 +667,7 @@
           </div>
           </div>
         </div>
-      </div>
+      </div> -->
     
     
     <div ng-show="showClientLists" >
@@ -752,7 +752,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary"   ng-click= "closeDetailsModal(x.id)">Editar</button>
+              <button type="button" class="btn btn-primary"   ng-click= "closeDetailsModal()">Editar</button>
             </div>
           </div>
 
@@ -773,18 +773,68 @@
               <input ng-model="clientPhoneDetails" type="text" class="form-control" id="DetailsTelephone" >
             </div>
             </div> 
-            <div class = "row" style="margin-top: 2%;" >
-              <label> Dirección</label>
-            </div>
-            <div class = "col-13">
-              <input ng-model="clientAddressDetails" type="text" class="form-control" id="DetailsAddress" >
-            </div>
             <div class = "row" style="margin-top: 2%;">
               <label> Lista de Precios</label>
             </div>
             <div class = "col-13">
               <select ng-model="priceListIdDetails"  type="button" ng-options="x for (x, y) in pricelist" class = "form-select">
               </select>
+            </div>
+            <div class = "row" style="margin-top: 2%;" >
+              <label> Calle:</label>
+            </div>
+            <div class = "row" >
+              <div class ="col-13">
+              <input ng-model="ClientStreet" type="text" class="form-control" id= "EditStreet" required>
+              </div>
+            </div>
+            <div class = "row" style="margin-top: 2%;" >
+               <div class = "col-6">
+                 <label> Num. Ext.:</label>
+               </div>
+               <div class = "col-6">
+                 <label>Num. Int.:</label>
+               </div>
+            </div>
+            <div class= "row" >
+              <div class = "col-6">
+                 <input ng-model="ClientExtNumber" type ="text"  class= "form-control" id="EditExtNumber" required>
+              </div>
+              <div class= "col-6">
+                <input  ng-model= "ClientIntNumber" type ="text" class="form-control" id="EditIntNumber" required>
+              </div>
+            </div>
+            <div  class= "row"  style="margin-top: 2%;">
+              <label> Colonia: </label>
+            </div>
+            <div  class="row" >
+              <div class = "col-13">
+               <input ng-model="ClientNeighborhood" type="text" class="form-control" id="EditNeighborhood" required>
+              </div>
+            </div>
+            <div class ="row" style="margin-top: 2%;">
+              <div class = "col-6">
+                <label> Ciudad:</label>
+              </div>
+              <div class = "col-6"> 
+                <label> Código Postal: </label>
+              </div>
+            </div>
+            <div class= "row">
+              <div class = "col-6">
+                <input ng-model="ClientCity" type="text" class = "form-control" id= "EditCity" required >
+              </div>
+              <div class = "col-6">
+                <input ng-model = "ClientZipCode" type="text" class= "form-control" id="EditZipCode" required>
+              </div>
+            </div>
+            <div class = "row" style="margin-top: 2%;">
+              <label>Estado:</label>
+            </div>
+            <div class = "row">
+              <div class = "col-13">
+                <input ng-model= "ClientState" type = "text" class = "form-control" id= "EditState" required> 
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
