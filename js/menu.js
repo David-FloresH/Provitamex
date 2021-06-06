@@ -16,14 +16,26 @@ app.controller("MainController", ['$scope', function($scope) {
       Público : "f706d48f-1c23-4d4b-8f37-afb803e394a9",
       Mayoreo : "d280c8ee-6226-4cb3-9005-05f3658d4c42",
     }
+
+    $scope.paymentMedoths ={
+      Efectivo : "1", 
+      TarjetaCredito: "2", 
+      TarjetaDebito: "3", 
+      Transferencia: "7"
+    }
   
     $scope.showForm = false;
     $scope.showCompletedForm = false;
     $scope.showCalendar = true;
     $scope.showLoading = false;
     $scope.showLoadingModal = false;
+    $scope.showOrderDetails = false; 
     $scope.showLoadingTable = false;
     $scope.warehouseChanged = false;
+    $scope.showDetails = false;
+    $scope.showOrderDetailsMobile = false;
+    $scope.showButtons = true;
+    $scope.disableEditOrder = false;
     $scope.startingTime = "";
     $scope.finishingTime = "";
     $scope.startingDate = "";
@@ -43,6 +55,10 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.completeProductList = [];
     $scope.baseUrl = "https://www.google.com/maps/search/?api=1&query="
     $scope.completeAddress = "";
+    $scope.bankAccounts = ""; 
+    $scope.showFinishInvoice = true;
+    $scope.showClientsDetails  = false; 
+    $scope.showEditClient = false; 
 
     $scope.NewClientInputMobile = {
       NewClientName : "",  
@@ -307,26 +323,32 @@ app.controller("MainController", ['$scope', function($scope) {
       deleteClient(deletedName, deleteId);
     }
 
-    $scope.showDetailsBox = function(showDetails){
+    $scope.showDetailsBox = function(ID){
       $scope.showLoadingModal = true; 
-      showId= $scope.clientList[showDetails].id;
-      console.log(showId);
-      getClientsDetails(showId);
-
-
+      console.log(ID);
+      getClientsDetails(ID);
     }
+
+
 
     $scope.closeDetailsModal = function(){
-      $("#ModalClientsDetails").modal('hide');
-      $("#ModalEditClient").modal('show');
+     $scope.showClientsDetails = false; 
+     $scope.showEditClient = true; 
     }
 
-    $scope.EditClientSetup = function(){
+    $scope.EditClientSetup = function(ID){
       $scope.editClientInformation = {
-        Id : showId,
+        Id : ID,
         ClientName : $scope.clientNameDetails,  
-        PriceList:  $scope.clientPhoneDetails, 
-        Telephone: $scope.priceListIdDetails ,
+        Telephone:  $scope.clientPhoneDetails, 
+        PriceList: $scope.priceListIdDetails ,
+        Street: "", 
+        ExtNumber : "",  
+        Neighborhood:"", 
+        ZipCode:"",
+        City: "", 
+        State:"", 
+        IntNumber: ""
       }
 
       editClientRequest($scope.editClientInformation);
@@ -368,6 +390,87 @@ app.controller("MainController", ['$scope', function($scope) {
       console.log(url);
             document.getElementById('enlace2').setAttribute('href',url); 
     }
+
+    $scope.getUrl3 = function(){
+      $scope.completeAddress = $scope.OrderDetailsAddress; 
+      console.log($scope.completeAddress);
+      var completeAddressSplitted =  $scope.completeAddress.split(" ");
+      var addressFormat1= ""; 
+      var addressFormat = "";
+      for (var i = 0; i <completeAddressSplitted.length; i++){
+         addressFormat1 = addressFormat1 + completeAddressSplitted[i]; 
+         addressFormat1 = addressFormat1 +"+";
+      }
+      var completeAddressSplitted2  = addressFormat1.split(",");
+      for (var i = 0; i <completeAddressSplitted2.length; i++){
+          addressFormat = addressFormat + completeAddressSplitted2[i]; 
+          addressFormat = addressFormat +"%2C";
+      }
+      url = $scope.baseUrl + addressFormat;
+      console.log(url);
+            document.getElementById('enlace3').setAttribute('href',url); 
+
+    }
+
+    $scope.OrderDetails = function (){
+
+      var source = "pc";
+      $scope.orderId = "315b4827-2723-4793-aa19-4ffc6f66865a";
+      $scope.showLoadingModal = true; 
+      GetOrderDetails($scope.orderId, source)
+     
+      console.log("holi se logró")
+    }
+
+    $scope.OrderDetails2 = function (){
+      var source = "mobile"; 
+      $scope.orderId = "315b4827-2723-4793-aa19-4ffc6f66865a";
+      $scope.showOrderDetailsMobile = true;
+      $scope.showLoadingOrderDetails = true; 
+      
+      getOrderDetails($scope.orderId,source)
+      getBankAccounts(); 
+
+    }
+
+    $scope.disable = function(){
+      getClientsDetails($scope.OrderDetailsClientId);
+      if ($scope.disableEditOrder == false){
+        $scope.disableEditOrder = true; 
+      }else {
+        $scope.disableEditOrder = false;
+      }
+     
+    }
+
+    $scope.bankAccount = function(index){
+        $scope.selectedBankAccount = $scope.bankAccounts[index].id;
+    }
+
+    $scope.finishInvoice = function(){
+       console.log("terminar orden");
+
+      newInvoice = {
+        clientID: $scope.OrderDetailsClientId,  
+        locationId: $scope.OrderDetailsLocationID,  
+        priceListId:$scope.clientsPriceListID, 
+        warehouseId:$scope.OrdersDetailsWarehouseId,
+        products: $scope.OrderDetailsProducts,
+        payments:[
+            {
+                paymentMedoth: $scope.newInvoicePaymentMedoth, 
+                accountID: $scope.selectedBankAccount, 
+                amount: $scope.OrderDetailsTotal 
+            }
+        ],
+       }
+
+       console.log(newInvoice);
+
+       newInvoiceRequest(newInvoice); 
+    }
+
+    
     
 }]);
 
@@ -737,6 +840,7 @@ function sendNewOrder() {
   scope.selectedProducts.forEach(element => {
     sentProducts.push({ID:element.id,Price:element.price,Qty:element.qty})
   });
+  var  date = scope.startingDate + "T00:00:00";
   let data = {
     addressId: scope.clientAddress,
     clientId: scope.indexID,
@@ -744,7 +848,8 @@ function sendNewOrder() {
     pricelistId: scope.priceListID,
     warehouseId: scope.warehouseID,
     products: sentProducts,
-    comments: newOrderDate
+    comments: newOrderDate, 
+    orderDate :date
   }
   console.log(data);
   $.ajaxSetup({
@@ -794,7 +899,7 @@ function NewClientRequest(NewClientInput){
    $.ajax({
      method: 'POST',
      jsonp: 'callback',
-     url: 'http://localhost:8081/newclient',
+     url: 'http://localhost:8081/client/new',
      contentType: "application/json; charset=utf-8",
      dataType: 'json',
      data: JSON.stringify({
@@ -909,7 +1014,6 @@ function NewClientRequest(NewClientInput){
       scope.clientList = response;
       console.log(scope.clientList);
       scope.showLoadingTable = false;
-      //console.log(scope.clientList[1].clientName);
       scope.$apply();
     },
     error: function(xhr,status,errorThrown) {
@@ -921,9 +1025,7 @@ function NewClientRequest(NewClientInput){
   });
 } 
 
-function getClientsDetails( ID){
-
-
+function getClientsDetails(ID){
   $.ajaxSetup({
     headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
   });
@@ -939,9 +1041,11 @@ function getClientsDetails( ID){
       console.log(response);
       scope.clientNameDetails = response.commercialName; 
       scope.clientPhoneDetails = response.telephones;
-      scope.clientAddressDetails = response.addresses[0];
-      let priceListName = getPriceListName(response.priceListID);
+      scope.clientAddressDetails = response.comments;
+      scope.clientsPriceListID = response.priceListID;
+      priceListName = getPriceListName(response.priceListID);
       scope.priceListIdDetails = priceListName;
+      console.log('el id en el request es '+ scope.clientsPriceListID);
       showDetailsContainer = true;
       scope.$apply();
     },
@@ -950,6 +1054,7 @@ function getClientsDetails( ID){
     },
     complete: function(xhr, status){
     scope.showLoadingModal = false;
+    scope.showClientsDetails = true; 
     scope.$apply()
     },
     
@@ -959,7 +1064,6 @@ function getClientsDetails( ID){
 
 function getPriceListName(priceListID){
   for(let property in scope.pricelist ){
-    console.log("holi");
      console.log(scope.pricelist[property]);
     if (scope.pricelist[property] == priceListID)
 
@@ -990,17 +1094,17 @@ function deleteClient(Name, ID){
                 
               },
               success: function(response){
-                Swal.fire(
-                  'Cliente Eliminado',
-                  'El cliente '+Name+ 'ha sido eliminado',
-                  'success'
-                )
+                
               },
               error: function(xhr,status,errorThrown) {
                 console.log("Error");
               },
               complete: function(xhr, status){
-                
+                Swal.fire(
+                  'Cliente Eliminado',
+                  'El cliente '+Name+ 'ha sido eliminado',
+                  'success'
+                )
                 },
             });
     }
@@ -1009,7 +1113,7 @@ function deleteClient(Name, ID){
 
 function editClientRequest(clientInfo){
 
-   Swal.fire({
+  /* Swal.fire({
     title: '¿Seguro que desea editar?',
     text: "Esta acción no podrá revertirse",
     icon: 'warning',
@@ -1018,37 +1122,165 @@ function editClientRequest(clientInfo){
     cancelButtonColor: '#d33',
     confirmButtonText: 'Editar '
      }).then((result) => {
-      if (result.isConfirmed) {
+      if (result.isConfirmed) {*/
         $.ajax({
-          method: 'PUT',
+          method: 'POST',
           jsonp: 'callback',
-          url: 'http://localhost:8081/client/new',
+          url: 'http://localhost:8081/client/edit',
           contentType: "application/json; charset=utf-8",
           dataType: 'json',
           data: JSON.stringify({
-              id: clientInfo.Id,
+              ID: clientInfo.Id,
               legalName: clientInfo.ClientName, 
               pricelistId: clientInfo.PriceList, 
               telephone: clientInfo.Telephone, 
+              streetName: clientInfo.Street, 
+              exteriorNo :clientInfo.ExtNumber,  
+              colonia: clientInfo.Neighborhood, 
+              zipCode: clientInfo.ZipCode,
+              city: clientInfo.City, 
+              state: clientInfo.State, 
+              interiorNo: clientInfo.IntNumber   
               
             }),
           beforeSend: function(xhr,settings){
             //spinner show;
           },
           success: function(response){
+            resp = response; 
+            console.log('holi estoy en success');
             Swal.fire(
               'Cliente Editado',
-              'El cliente '+clientInfo.ClientName+ 'ha sido editado satisfactoriamente',
+              'El cliente ha sido editado satisfactoriamente',
               'success')
           },
           error: function(xhr,status,errorThrown) {
-            swal.fire('Error', 'Ocurrió un error, intente de nuevo', 'error');
+            Swal.fire('Error', 'Ocurrió un error, intente de nuevo', 'error');
           },
           complete: function(xhr, status){     
           }
         });
-      }
-     })
+   /*   }
+     })*/
      
 }
 
+
+function getOrderDetails(orderId, scr){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/orders/'+orderId,
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      console.log(response);
+      scope.OrderDetailsClientId = response.clientID;
+      scope.OrderDetailsName = response.clientName;
+      scope.OrderDetailsphone = response.phoneNumber; 
+      scope.OrderDetailsAddress = response.address; 
+      scope.OrderDetailsWarehouse = response.warehouseName;
+      scope.OrderDetailsDate = response.orderDate; 
+      scope.OrderDetailsEmployee = response.empoyeeName;
+      scope.OrderDetailsProducts = response.products;
+      scope.OrderDetailsTotal = response.total;
+      scope.OrderDetailsSubtotal = response.productSubtotal;
+      scope.OrderDetailsDiscount = response.discount;
+      scope.OrderDetailsLocationID = response.locationID; 
+      scope.OrdersDetailsWarehouseId = response.warehouseID;
+      console.log(scope.OrderDetailsName);
+
+      if (scr == 'pc'){
+        console.log('vengo de pc');
+        scope.showLoadingModal = false; 
+        scope.showOrderDetails= true;
+      } else if(scr == "mobile"){
+        console.log('vengo del mobile');
+        scope.showLoadingOrderDetails = false; 
+        scope.showButtons = false; 
+        scope.showDetails = true; 
+      }
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+    }
+      
+    
+  });
+}
+
+function getBankAccounts ()
+{
+
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  })
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/accounts', 
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      scope.bankAccounts = response; 
+      console.log(scope.bankAccounts); 
+      scope.$apply();
+
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+    }
+      
+    
+  });
+}
+
+function newInvoiceRequest(newInvoice)
+{
+  $.ajax({
+    method: 'POST',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/newinvoice',
+    contentType: "application/json; charset=utf-8",
+    dataType: 'json',
+    data: JSON.stringify({
+        clientID: newInvoice.clientID,
+        locationId: newInvoice.locationId,  
+        priceListId:newInvoice.priceListId, 
+        warehouseId: newInvoice.warehouseId,
+        products:newInvoice.products,
+        payments:[
+            {
+                PaymentMethod: newInvoice.paymentMedoth, 
+                AccountID: newInvoice.accountID, 
+                Amount:newInvoice.amount
+            }
+        ],
+           
+       }),
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      Swal.fire("Venta Registrada", "La venta se registró correctamente", "success");   
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+    }
+  });
+
+}
