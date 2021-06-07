@@ -63,7 +63,7 @@
         <button type="button" class="btn btn-primary" ng-click = "OrderDetails2()" >Orden 2</button>
   
       </div>
-      </div>
+    </div>
 
     <div ng-show="showCalendar">
       <div class="row" style="margin-top: 1rem; margin-left: 1%;">
@@ -95,7 +95,7 @@
         </div>
         <div class="row">
           <div class="col-5">
-            <input ng-model="pickedDate" class="form-control" type="date" style="margin-left: 0px;" ng-change="dateChanged()">
+            <input ng-model="pickedDate" id="calendarDate" class="form-control" type="date" style="margin-left: 0px;" ng-change="dateChanged()">
           </div>
           <div class="col-4">
             <select  class="form-control" name="" id="" ng-change="changeOrdersStatus()" ng-model="activeOrClosed">
@@ -114,13 +114,10 @@
             <div class="col-12" style="margin-left: 4%; margin-top: 5%;">
               <button ng-class="whichButtonIsIt(order)" style="width: 100%; height: 100%; border-radius: 30px;">
                 <div class="row">
-                  <span class="badge badge-primary" style="width: auto; font-size: 13px;">{{order.name}}</span>
+                  <span class="badge badge-primary" style="width: auto; font-size: 13px;">{{order.clientName}}</span>
                 </div>
                 <div class="row">
-                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.address}}</span>
-                </div>
-                <div class="row">
-                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.scheduled}}</span>
+                  <span class="badge badge-light" style="width: auto; font-size: 13px;">{{order.comments}}</span>
                 </div>
               </button>
             </div>
@@ -208,7 +205,7 @@
                 Desde: <input ng-model = "startingTime" type="time" id="startingTime" class="form-control"/>
               </div>
               <div class="col-3">
-                Hasta: <input type="time" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+                Hasta: <input type="time" id="finishingTime" ng-model= "finishingTime" class="form-control"/>
               </div>
               <div class="col-3">
                 <label  for="exampleFormControlInput1">Almacen</label>
@@ -295,7 +292,7 @@
 
               </div>
              <div class="col-8">
-               <button class="btn btn-primary" style="width: 100%;" ng-click="sendForm()">Enviar</button>
+               <button class="btn btn-primary" style="width: 100%;" onclick="sendNewOrder()">Enviar</button>
              </div>
              <div class="col-3">
 
