@@ -516,7 +516,7 @@
               </div>
             </div>
 
-          <div ng-if = "!showLoadingModal">
+          <div  ng-model = "showClientsDetails">
             <div class = "row" style="margin-top: 2%;" >
               <label> Nombre:</label>
             </div> 
@@ -635,10 +635,7 @@
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               <button type="submit" class="btn btn-primary" ng-click ="EditClientSetup()"  >Guardar </button>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary"   ng-click= "closeDetailsModal()">Editar</button>
+
           </div>
           </div>
         </div>

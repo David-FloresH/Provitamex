@@ -195,7 +195,19 @@ app.controller("MainController", ['$scope', function($scope) {
               $scope.showForm = false;
               $scope.showCompletedForm = false;
               $scope.showNewClient = true; 
-              $scope.showOrderDetailsMobile = false; 
+              $scope.showOrderDetailsMobile = false;
+              $scope.NewClientInputMobile = {
+                NewClientName : "",  
+                SelectedPriceList:  "", 
+                NewClientTelephone: "" , 
+                NewClientStreet: "", 
+                NewClientExtNumber : "",  
+                NewClientNeighborhood:"", 
+                NewClientZipCode:"",
+                NewClientCity: "", 
+                NewClientState:"", 
+                NewClientIntNumber: "" 
+              };
              
 
        }
@@ -1284,6 +1296,18 @@ function editClientRequest(clientInfo){
                'Cliente Editado',
                'El cliente ha sido editado satisfactoriamente',
                'success')
+
+               scope.clientNameDetails = response.commercialName; 
+               scope.clientPhoneDetails = response.telephones;
+               scope.clientAddressDetails = response.comments;
+               scope.clientsPriceListID = response.priceListID;
+               priceListName = getPriceListName(response.priceListID);
+               scope.priceListIdDetails = priceListName;
+               console.log('el id en el request es '+ scope.clientsPriceListID);
+               scope.clientsDetailsId = clientInfo.Id; 
+               scope.showClientsDetails = true; 
+               scope.showEditClient = false; 
+               scope.$apply();
              }
              else {
                Swal.fire(
@@ -1445,7 +1469,9 @@ function newInvoiceRequest(newInvoice)
     },
     success: function(response){
       Swal.fire("Venta Registrada", "La venta se registró correctamente", "success"); 
-      showOrderDetailsMobile = false;     },
+      scope.showOrderDetailsMobile = false;   
+      scope.showCalendar = true; 
+      scope.$apply()  },
     error: function(xhr,status,errorThrown) {
       console.log("Error");
     },
