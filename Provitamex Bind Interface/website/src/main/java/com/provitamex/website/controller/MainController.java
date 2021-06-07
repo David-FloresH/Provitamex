@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -99,10 +100,10 @@ public class MainController {
 
 	@CrossOrigin
 	@GetMapping("/orders")
-	public List<Order> getOrders(@RequestBody Map<String,String> details){
-		String status= details.get("status");
-		String orderDate= details.get("orderDate");
-		String warehouseId= details.get("warehouseId");
+	public List<Order> getOrders(@RequestParam String status, @RequestParam String orderDate, @RequestParam String warehouseId){
+		//String status= details.get("status");
+		//String orderDate= details.get("orderDate");
+		//String warehouseId= details.get("warehouseId");
 		logger.info("Orders method called");
 		System.out.println("Orders method called");
 		return service.getOrders(status,orderDate,warehouseId);
