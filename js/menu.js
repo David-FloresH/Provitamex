@@ -3,10 +3,6 @@ let newProductID = "";
 let newProductInventory = "";
 let newProductPrice = "";
 
-
-
-
-
 var app = angular.module("myApp", []);
 var scope;
 
@@ -166,6 +162,9 @@ app.controller("MainController", ['$scope', function($scope) {
 
     
     $scope.searchClientForPC = function(){
+      $scope.totalSalePC = 0;
+      $scope.subtotal = 0;
+      $scope.discount = 0;
       $scope.showLoadingModal = true;
       $scope.indexID = '';
       $scope.clientName = document.getElementById("clientInputPC").value;
@@ -435,7 +434,7 @@ app.controller("MainController", ['$scope', function($scope) {
       console.log("cambio de fecha")
     }
 
-    $scope.changeOrders = function(){
+    $scope.searchOrdersByDate = function(){
       let newStatus = "0"
       if($scope.activeOrClosed == "Activo"){
         newStatus = "0"
@@ -447,8 +446,12 @@ app.controller("MainController", ['$scope', function($scope) {
       getOrdersByDate($scope.calendarWarehouse.id,newStatus,newDate);
     }
 
-    $scope.changeOrdersStatus = function(){
+    $scope.changeOrders = function(){
 
+    }
+
+    $scope.changeOrdersStatus = function(){
+      $scope.currentOrders = [];
     }
     
     $scope.getUrl3 = function(){
@@ -878,6 +881,9 @@ function getProductList(warehouse) {
 }
 
 function sendNewOrder() {
+  console.log(scope.discount);
+  let newDiscount = parseFloat(document.getElementById("discountValue").value).toFixed(4);
+  console.log(newDiscount);
   let sentProducts = [];
   let services = [];
   let newOrderDate = document.getElementById("startingTime").value + " " + document.getElementById("finishingTime").value;
@@ -914,7 +920,7 @@ function sendNewOrder() {
       pricelistId: scope.priceListID,
       warehouseId: scope.warehouseID,
       orderDate: date,
-      discountAmount: "0.0000",
+      discountAmount: newDiscount,
       products: sentProducts,
       services: sentProducts,
       comments: newOrderDate
