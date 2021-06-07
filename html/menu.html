@@ -63,7 +63,7 @@
         <button type="button" class="btn btn-primary" ng-click = "OrderDetails2()" >Orden 2</button>
   
       </div>
-      </div>
+    </div>
 
     <div ng-show="showCalendar">
       <div class="row" style="margin-top: 1rem; margin-left: 1%;">
@@ -208,7 +208,7 @@
                 Desde: <input ng-model = "startingTime" type="time" id="startingTime" class="form-control"/>
               </div>
               <div class="col-3">
-                Hasta: <input type="time" id="finishingTime" ng-model= "finishingTime" class="form-control timepicker"/>
+                Hasta: <input type="time" id="finishingTime" ng-model= "finishingTime" class="form-control"/>
               </div>
               <div class="col-3">
                 <label  for="exampleFormControlInput1">Almacen</label>
@@ -295,7 +295,7 @@
 
               </div>
              <div class="col-8">
-               <button class="btn btn-primary" style="width: 100%;" ng-click="sendForm()">Enviar</button>
+               <button class="btn btn-primary" style="width: 100%;" onclick="sendNewOrder()">Enviar</button>
              </div>
              <div class="col-3">
 

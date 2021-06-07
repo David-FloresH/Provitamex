@@ -4,34 +4,34 @@ let newProductInventory = "";
 let newProductPrice = "";
 
 
-// $.ajaxSetup({
-//   headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
-// });
-// $.ajax({
-//   method: 'GET',
-//   jsonp: 'callback',
-//   url: 'http://localhost:8081/orders',
-//   contentType: "application/json; charset=utf-8",
-//   dataType: 'json',
-//   data: JSON.stringify({
-//     status: "1",
-//     orderDate: "",
-//     warehouseId: ""
-//   }),
-//   beforeSend: function(xhr,settings){
-//     //spinner show;
-//   },
-//   success: function(response){
-//     console.log(response);
-//   },
-//   error: function(xhr,status,errorThrown) {
-//     Swal.fire("Error", "Ha ocurrido un error.", "error");
-//     console.log(status);
-//   },
-//   complete: function(xhr, status){
+$.ajaxSetup({
+  headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+});
+$.ajax({
+  method: 'GET',
+  jsonp: 'callback',
+  url: 'http://localhost:8081/orders',
+  contentType: "application/json; charset=utf-8",
+  dataType: 'json',
+  data: JSON.stringify({
+    status: "1",
+    orderDate: "",
+    warehouseId: ""
+  }),
+  beforeSend: function(xhr,settings){
+    //spinner show;
+  },
+  success: function(response){
+    console.log(response);
+  },
+  error: function(xhr,status,errorThrown) {
+    Swal.fire("Error", "Ha ocurrido un error.", "error");
+    console.log(status);
+  },
+  complete: function(xhr, status){
 
-//   }
-// });
+  }
+});
 
 
 var app = angular.module("myApp", []);
@@ -178,6 +178,7 @@ app.controller("MainController", ['$scope', function($scope) {
                 $scope.showCompletedForm = false;
                 $scope.showNewClient = false; 
                 $scope.showOrderDetailsMobile = false; 
+                $scope.showButtons = false;
                 break;
             
             case 1:
@@ -483,9 +484,15 @@ app.controller("MainController", ['$scope', function($scope) {
 
     $scope.changeOrders = function(){
       $scope.currentOrders = [];
-      console.log($scope.calendarWarehouse)
+      let activeOrNot = 0;
+      if($scope.activeOrClosed == "Activo"){
+        activeOrNot = 1;
+      }
+      else{
+        activeOrNot = 0;
+      }
       $scope.orders.forEach(element => {
-        if(element.warehouse == $scope.calendarWarehouse.name && element.active == 1){
+        if(element.warehouse == $scope.calendarWarehouse.name && element.active == activeOrNot){
           $scope.currentOrders.push(element);
         }
       })
@@ -494,16 +501,17 @@ app.controller("MainController", ['$scope', function($scope) {
     $scope.changeOrdersStatus = function(){
       console.log($scope.activeOrClosed);
       $scope.currentOrders = [];
-      if($scope.activeOrClosed == "Activo"){
+      if($scope.activeOrClosed == "Activo" && $scope.calendarWarehouse !== ""){
         $scope.orders.forEach(element => {
-          if(element.active == 1){
+          if(element.active == 1 && element.warehouse == $scope.calendarWarehouse.name){
             $scope.currentOrders.push(element);
           }
         })
       }
-      else{
+      else if($scope.activeOrClosed == "Cerrado" && $scope.calendarWarehouse !== ""){
+        console.log($scope.calendarWarehouse);
         $scope.orders.forEach(element => {
-          if(element.active == 0){
+          if(element.active == 0 && element.warehouse == $scope.calendarWarehouse.name){
             $scope.currentOrders.push(element);
           }
         })
@@ -532,7 +540,6 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.OrderDetails = function (){
-
       var source = "pc";
       $scope.orderId = "315b4827-2723-4793-aa19-4ffc6f66865a";
       $scope.showLoadingModal = true; 
@@ -798,6 +805,7 @@ function getCompletedFormInfo() {
         console.log(response);
         scope.clientPhone = response.telephones;
         scope.clientAddress = response.comments;
+        scope.addressID = response.addresses[0];
         scope.priceListID = response.priceListID;
         scope.$apply();
       },
@@ -805,21 +813,7 @@ function getCompletedFormInfo() {
         console.log("Error");
       },
       complete: function(xhr, status){
-        $('.datepickerD').datepicker({
-          dateFormat: 'dd-mm-yy'
-        });
         console.log("init");
-        $('.timepicker').timepicker({
-          timeFormat: 'h:mm p',
-          interval: 60,
-          minTime: '10',
-          maxTime: '6:00pm',
-          defaultTime: '11',
-          startTime: '10:00',
-          dynamic: false,
-          dropdown: true,
-          scrollbar: true
-        });
       }
     });
   
@@ -950,12 +944,14 @@ function getProductList(warehouse) {
 
 function sendNewOrder() {
   let sentProducts = [];
-  let newOrderDate = document.getElementById("startingDate").value + " " + document.getElementById("startingTime").value + " " + document.getElementById("finishingTime").value;
-  console.log(newOrderDate);
+  let services = [];
+  let newOrderDate = document.getElementById("startingTime").value + " " + document.getElementById("finishingTime").value;
+  console.log(document.getElementById("startingDate"));
   scope.selectedProducts.forEach(element => {
-    sentProducts.push({ID:element.id,Price:element.price,Qty:element.qty})
+    sentProducts.push({ID:element.id,Price:element.price,Qty:element.qty});
   });
-  var  date = scope.startingDate + "T00:00:00";
+  var  date = document.getElementById("startingDate").value + "T00:00:00";
+  console.log(date);
   let data = {
     addressId: scope.clientAddress,
     clientId: scope.indexID,
@@ -964,7 +960,7 @@ function sendNewOrder() {
     warehouseId: scope.warehouseID,
     products: sentProducts,
     comments: newOrderDate, 
-    orderDate :date
+    orderDate: date
   }
   console.log(data);
   $.ajaxSetup({
@@ -977,12 +973,15 @@ function sendNewOrder() {
     contentType: "application/json; charset=utf-8",
     dataType: 'json',
     data: JSON.stringify({
-      addressId: scope.clientAddress,
+      addressId: scope.addressID,
       clientId: scope.indexID,
       locationId: scope.locationID,
       pricelistId: scope.priceListID,
       warehouseId: scope.warehouseID,
+      orderDate: date,
+      discountAmount: "0",
       products: sentProducts,
+      services: sentProducts,
       comments: newOrderDate
     }),
     beforeSend: function(xhr,settings){
@@ -993,12 +992,11 @@ function sendNewOrder() {
       $('#staticBackdrop').modal('hide');
       document.getElementById("clientInput").value = "";
       scope.showCompletedForm = false;
-      scope.showForm = true;
       Swal.fire("Orden Exitosa!", "Se ha registrado la orden correctamente.", "success");
+      $('#newOrderModal').modal('hide');
       scope.$apply();
     },
     error: function(xhr,status,errorThrown) {
-      $('#staticBackdrop').modal('hide');
       Swal.fire("Error", "Ha ocurrido un error.", "error");
       console.log("Error");
     },
