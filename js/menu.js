@@ -356,11 +356,9 @@ app.controller("MainController", ['$scope', function($scope) {
       getClientsDetails(editId);
     }
 
-    $scope.deleteClient = function(clientDeleting){
-      deleteId =  $scope.clientList[clientDeleting].id;
-      deletedName = $scope.clientList[clientDeleting].clientName;
-      console.log(deleteId);
-      deleteClient(deletedName, deleteId);
+    $scope.deleteClient = function(clientDeleting, name){
+    
+      deleteClient(clientDeleting, name);
     }
 
     $scope.showDetailsBox = function(ID){
@@ -483,13 +481,14 @@ app.controller("MainController", ['$scope', function($scope) {
       console.log("holi se logró")
     }
 
-    $scope.OrderDetails2 = function (){
+    $scope.OrderDetails2 = function (ID){
       var source = "mobile"; 
-      $scope.orderId = "315b4827-2723-4793-aa19-4ffc6f66865a";
+      console.log(ID);
+      $scope.showCalendar = false; 
       $scope.showOrderDetailsMobile = true;
       $scope.showLoadingOrderDetails = true; 
       
-      getOrderDetails($scope.orderId,source)
+      getOrderDetails(ID,source)
       getBankAccounts(); 
 
     }
@@ -509,8 +508,9 @@ app.controller("MainController", ['$scope', function($scope) {
   }
 
 
-  $scope.finishInvoice = function(){
+  $scope.finishInvoice = function(orderId){
     newInvoice = {
+    orderId : orderId,
     clientID: $scope.OrderDetailsClientId,  
     locationId: $scope.OrderDetailsLocationID,  
     pricelistId:$scope.clientsPriceListID, 
@@ -1093,7 +1093,6 @@ function getClientsDetails(ID){
       scope.clientsPriceListID = response.priceListID;
       priceListName = getPriceListName(response.priceListID);
       scope.priceListIdDetails = priceListName;
-      console.log('el id en el request es '+ scope.clientsPriceListID);
       showDetailsContainer = true;
       scope.clientsDetailsId = ID; 
 
@@ -1131,7 +1130,7 @@ function getPriceListName(priceListID){
   }
 }
 
-function deleteClient(Name, ID){
+function deleteClient(ID, Name){
   Swal.fire({
     title: '¿Seguro que desea eliminar?',
     text: "Esta acción no podrá revertirse",
@@ -1148,7 +1147,7 @@ function deleteClient(Name, ID){
             $.ajax({
               method: 'DELETE',
               jsonp: 'callback',
-              url: 'http://localhost:8081/deleteclient/'+ID,
+              url: 'http://localhost:8081/delete/client/'+ID,
               dataType: 'json',
               beforeSend: function(xhr,settings){
                 
@@ -1303,6 +1302,8 @@ function getOrderDetails(orderId, scr){
       scope.OrderDetailsDiscount = response.discount;
       scope.OrderDetailsLocationID = response.locationID; 
       scope.OrdersDetailsWarehouseId = response.warehouseID;
+      scope.startingTime = response.comments.split(' ')[0]; 
+      scope.finishingTime = response.comments.split(' ')[1]; 
       console.log(scope.OrderDetailsName);
 
       scope.OrderDetailsProducts.forEach(element => {
@@ -1392,7 +1393,9 @@ function newInvoiceRequest(newInvoice)
       Swal.fire("Venta Registrada", "La venta se registró correctamente", "success"); 
       scope.showOrderDetailsMobile = false;   
       scope.showCalendar = true; 
-      scope.$apply()  },
+      scope.$apply()  
+      deleteOrder(newInvoice.orderId); 
+    },
     error: function(xhr,status,errorThrown) {
       console.log("Error");
     },
@@ -1432,4 +1435,27 @@ function getOrdersByDate(warehouse,status,date){
   
     }
   });
+}
+
+function deleteOrder(orderID){
+
+  $.ajax({
+    method: 'DELETE',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/delete/order/'+ID,
+    dataType: 'json',
+    beforeSend: function(xhr,settings){
+  
+    },
+    success: function(response){
+      
+    },
+    error: function(xhr,status,errorThrown) {
+      console.log("Error");
+    },
+    complete: function(xhr, status){
+     console.log('listo merenges');
+      },
+  });
+
 }
