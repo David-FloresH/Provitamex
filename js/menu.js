@@ -357,7 +357,7 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.deleteClient = function(clientDeleting, name){
-    
+     
       deleteClient(clientDeleting, name);
     }
 

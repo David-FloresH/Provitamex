@@ -30,7 +30,7 @@
     <div class='headerColor' style="background-color: #000066;">manolon</div>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="#"><img src="../pictures/Imagen1.png" alt="" width="100" height="50" class="responsive"></a>
+      <a class="navbar-brand" href="#"><img src="../pictures/Imagen1.png" alt="" width="125s" height="50" class="responsive"></a>
       <select class="navbar-toggler" type="button" data-toggle="collapse"  aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" ng-model="selectedOption" 
       style="font-size: 15px;color: rgb(8, 3, 3);" ng-options="option for option in options" ng-change="filterContent()"></select>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -420,16 +420,17 @@
             <table class = "table table-hover" style = "max-width: 50%;margin-left: 25%; margin-top: 5%;">
               <thead>
                 <tr>
-                  <th>
+                  <th colspan="2">
                      Buscar: <input class="form-control" ng-model="searchText">
                   </th>
                 </tr>
                 <tr>
-                    <th colspan = "2" scope = "col" >Nombre del cliente</th>
+                    <th colspan = "3" scope = "col" >Nombre del cliente</th>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="x in clientList | filter:searchText track by x.id">
+                  <td>{{$index+1}}</td>
                   <td  ng-model = "editClientSelect"  style = "width: 95%;" ng-click= "showDetailsBox(x.id)" data-bs-toggle="modal" data-bs-target="#ModalClientsDetails">{{ x.clientName }}</td>
                   <td style= "width: max-content;">
                     <div class="buttons">
