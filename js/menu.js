@@ -4,34 +4,7 @@ let newProductInventory = "";
 let newProductPrice = "";
 
 
-$.ajaxSetup({
-  headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
-});
-$.ajax({
-  method: 'GET',
-  jsonp: 'callback',
-  url: 'http://localhost:8081/orders',
-  contentType: "application/json; charset=utf-8",
-  dataType: 'json',
-  data: JSON.stringify({
-    status: "1",
-    orderDate: "",
-    warehouseId: ""
-  }),
-  beforeSend: function(xhr,settings){
-    //spinner show;
-  },
-  success: function(response){
-    console.log(response);
-  },
-  error: function(xhr,status,errorThrown) {
-    Swal.fire("Error", "Ha ocurrido un error.", "error");
-    console.log(status);
-  },
-  complete: function(xhr, status){
 
-  }
-});
 
 
 var app = angular.module("myApp", []);
@@ -40,37 +13,7 @@ var scope;
 window.onload = function(){
   scope = angular.element($('#scope')).scope();
   scope.currentOrders = [];
-  scope.orders = 
-      [
-        {
-        name: "David Flores",
-        scheduled: "9:00 AM - 11:00 AM",
-        address: "cagliari 2267",
-        active: 1,
-        warehouse: "Ivan"
-        },
-        {
-          name: "Manuel Montoya",
-          scheduled: "8:00 AM - 9:00 AM",
-          address: "rio mayo #1382 Col. Santa Teresa",
-          active: 1,
-          warehouse: "Ivan"
-        },
-        {
-          name: "Sofia Villavicencio",
-          scheduled: "12:00 PM - 2:00 PM",
-          address: "Mexicali",
-          active: 1,
-          warehouse: "Ivan"
-        },
-        {
-          name: "Jonathan Hernandez",
-          scheduled: "7:00 AM - 8:00 AM",
-          address: "residencias",
-          active: 0,
-          warehouse: "Ivan"
-        }
-      ]
+  scope.orders = [];
 
   scope.warehousesList = [];
   getCalendarWarehouses();
@@ -85,7 +28,7 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.whichButtonIsIt = function(order){
-      if(order.active){
+      if($scope.activeOrClosed == "Activo"){
         return "btn btn-warning";
       }
       else{
@@ -483,39 +426,19 @@ app.controller("MainController", ['$scope', function($scope) {
     }
 
     $scope.changeOrders = function(){
-      $scope.currentOrders = [];
-      let activeOrNot = 0;
+      let newStatus = "0"
       if($scope.activeOrClosed == "Activo"){
-        activeOrNot = 1;
+        newStatus = "0"
       }
       else{
-        activeOrNot = 0;
+        newStatus = "1"
       }
-      $scope.orders.forEach(element => {
-        if(element.warehouse == $scope.calendarWarehouse.name && element.active == activeOrNot){
-          $scope.currentOrders.push(element);
-        }
-      })
+      let newDate = document.getElementById("calendarDate").value;
+      getOrdersByDate($scope.calendarWarehouse.id,newStatus,newDate);
     }
 
     $scope.changeOrdersStatus = function(){
-      console.log($scope.activeOrClosed);
-      $scope.currentOrders = [];
-      if($scope.activeOrClosed == "Activo" && $scope.calendarWarehouse !== ""){
-        $scope.orders.forEach(element => {
-          if(element.active == 1 && element.warehouse == $scope.calendarWarehouse.name){
-            $scope.currentOrders.push(element);
-          }
-        })
-      }
-      else if($scope.activeOrClosed == "Cerrado" && $scope.calendarWarehouse !== ""){
-        console.log($scope.calendarWarehouse);
-        $scope.orders.forEach(element => {
-          if(element.active == 0 && element.warehouse == $scope.calendarWarehouse.name){
-            $scope.currentOrders.push(element);
-          }
-        })
-      }
+
     }
     
     $scope.getUrl3 = function(){
@@ -979,7 +902,7 @@ function sendNewOrder() {
       pricelistId: scope.priceListID,
       warehouseId: scope.warehouseID,
       orderDate: date,
-      discountAmount: "0",
+      discountAmount: "0.0000",
       products: sentProducts,
       services: sentProducts,
       comments: newOrderDate
@@ -1451,4 +1374,36 @@ function newInvoiceRequest(newInvoice)
     }
   });
 
+}
+
+function getOrdersByDate(warehouse,status,date){
+  $.ajaxSetup({
+    headers: { 'Access-Control-Allow-Origin':'*' , 'accept':'application/json', 'Content-Type':'application/json'}
+  });
+  $.ajax({
+    method: 'GET',
+    jsonp: 'callback',
+    url: 'http://localhost:8081/orders',
+    contentType: "application/json; charset=utf-8",
+    dataType: 'json',
+    data: {
+      status: status,
+      orderDate: date,
+      warehouseId: warehouse
+    },
+    beforeSend: function(xhr,settings){
+      //spinner show;
+    },
+    success: function(response){
+      scope.currentOrders = response;
+      scope.$apply();
+    },
+    error: function(xhr,status,errorThrown) {
+      Swal.fire("Error", "Ha ocurrido un error.", "error");
+      console.log(status);
+    },
+    complete: function(xhr, status){
+  
+    }
+  });
 }
