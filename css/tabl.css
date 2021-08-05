@@ -1,0 +1,25 @@
+
+  table tr:nth-child(odd) {
+    background-color: #f1f1f1;
+  }
+  
+  table tr:nth-child(even) {
+    background-color: #ffffff;
+  }
+
+  .clientListTable{
+    color: black;
+  }
+
+  li:hover {
+      cursor: pointer;
+  }
+
+  a:active {
+      background-color: aliceblue;
+  }
+
+  #enlace #enlace2{
+    color:black; 
+    text-decoration: underline;
+  }

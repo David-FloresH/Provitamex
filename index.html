@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Provitamex</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../css/logincss.css">
+  <script src="sweetalert2.all.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="sweetalert2.all.min.js"></script>
+
+  
+  </head>
+
+<body ng-app="myApp" ng-controller="MainController">
+
+  
+  <div style="background-color: #000066;">manolon</div>
+  <div class="wrapper fadeInDown">
+    <div id="formContent">
+      
+      <div class="fadeIn first">
+        <img src="../pictures/provitamex.jpg" id="icon" alt="User Icon" />
+      </div>
+  
+      
+      <form>
+        <input ng-model="user" type="text" id="login" class="fadeIn second" name="login" placeholder="Usuario">
+        <input ng-model="pass" type="text" id="password" class="fadeIn third" name="login" placeholder="Contraseña">
+        <input type="submit" ng-click="getUsers();" class="fadeIn fourth" value="Iniciar Sesión">
+      </form>
+  
+      
+      <div id="formFooter">
+        <a class="underlineHover" href="#">¿Olvidaste tu contraseña?</a>
+      </div>
+    </div>
+  </div>
+  <script src="../js/index.js"></script> 
+</body>
+</html>
